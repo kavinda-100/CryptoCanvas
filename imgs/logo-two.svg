@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">CryptoCanvas Splash Icon</title>
+  <desc id="desc">Abstract neon green paint splash with black accents on transparent background</desc>
+
+  <defs>
+    <!-- Neon glow -->
+    <filter id="neonSplash" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Abstract splash shape -->
+  <path d="M120 40 
+           C 160 60, 200 100, 190 140 
+           C 180 180, 130 200, 90 180 
+           C 60 165, 50 130, 70 100 
+           C 85 75, 100 60, 120 40 Z"
+        fill="#00FF66"
+        opacity="0.95"
+        style="filter: url(#neonSplash)"/>
+
+  <!-- Inner brush-like streak -->
+  <path d="M80 130 C 110 120, 150 100, 175 120"
+        fill="none"
+        stroke="#000000"
+        stroke-width="8"
+        stroke-linecap="round"
+        opacity="0.85"/>
+
+  <!-- Small scattered paint drops -->
+  <circle cx="65" cy="90" r="6" fill="#00FF66" style="filter: url(#neonSplash)" opacity="0.9"/>
+  <circle cx="185" cy="160" r="5" fill="#00FF66" style="filter: url(#neonSplash)" opacity="0.9"/>
+  <circle cx="100" cy="200" r="4" fill="#00FF66" style="filter: url(#neonSplash)" opacity="0.9"/>
+</svg>

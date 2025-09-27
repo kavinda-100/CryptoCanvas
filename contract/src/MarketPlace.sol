@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
 /**
  * @title CryptoCanvasNFT
@@ -32,6 +33,17 @@ contract MarketPlace is ReentrancyGuard {
         uint256 price;
         bool active;
         uint256 listedAt;
+    }
+
+    struct ListingWithTokenURI {
+        uint256 listingId;
+        address seller;
+        address nftContract;
+        uint256 tokenId;
+        uint256 price;
+        bool active;
+        uint256 listedAt;
+        string tokenURI;
     }
 
     mapping(uint256 => Listing) private listings; // (id => Listing)
@@ -170,25 +182,37 @@ contract MarketPlace is ReentrancyGuard {
     // -------------------------------- View/Pure Functions ---------------------------------------------
 
     /**
-     * @notice This function return all the listings.
-     * @return array of Listing struct
+     * @notice This function return all the listings with tokenURI.
+     * @return array of ListingWithTokenURI struct
      */
-    function getAllListings() external view returns (Listing[] memory) {
+    function getAllListingsWithTokenURI() external view returns (ListingWithTokenURI[] memory) {
         // create a new array with the size of nextListingId
-        Listing[] memory allListings = new Listing[](nextListingId - 1);
-        // loop through the listings and add to the array
+        ListingWithTokenURI[] memory allListings = new ListingWithTokenURI[](nextListingId - 1);
+        // loop through the listings and add to the array with tokenURI
         for (uint256 i = 0; i < nextListingId - 1; i++) {
-            allListings[i] = listings[i];
+            Listing memory listing = listings[i];
+            string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
+
+            allListings[i] = ListingWithTokenURI({
+                listingId: listing.listingId,
+                seller: listing.seller,
+                nftContract: listing.nftContract,
+                tokenId: listing.tokenId,
+                price: listing.price,
+                active: listing.active,
+                listedAt: listing.listedAt,
+                tokenURI: tokenURI
+            });
         }
         return allListings;
     }
 
     /**
-     * @notice This function return all the listings of a user.
+     * @notice This function return all the listings of a user with tokenURI.
      * @param _user address of the user
-     * @return array of Listing struct
+     * @return array of ListingWithTokenURI struct
      */
-    function getAllUserListings(address _user) external view returns (Listing[] memory) {
+    function getAllUserListingsWithTokenURI(address _user) external view returns (ListingWithTokenURI[] memory) {
         uint256 count = 0;
         // first loop to count the number of listings by the user
         for (uint256 i = 0; i < nextListingId - 1; i++) {
@@ -198,12 +222,24 @@ contract MarketPlace is ReentrancyGuard {
         }
 
         // create a new array with the size of count
-        Listing[] memory userListings = new Listing[](count);
+        ListingWithTokenURI[] memory userListings = new ListingWithTokenURI[](count);
         uint256 index = 0;
-        // second loop to add the listings to the array
+        // second loop to add the listings to the array with tokenURI
         for (uint256 i = 0; i < nextListingId - 1; i++) {
             if (listings[i].seller == _user) {
-                userListings[index] = listings[i];
+                Listing memory listing = listings[i];
+                string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
+
+                userListings[index] = ListingWithTokenURI({
+                    listingId: listing.listingId,
+                    seller: listing.seller,
+                    nftContract: listing.nftContract,
+                    tokenId: listing.tokenId,
+                    price: listing.price,
+                    active: listing.active,
+                    listedAt: listing.listedAt,
+                    tokenURI: tokenURI
+                });
                 index++;
             }
         }
@@ -211,12 +247,29 @@ contract MarketPlace is ReentrancyGuard {
     }
 
     /**
-     * @notice This function return the listing details.
+     * @notice This function return the listing details with tokenURI.
      * @param listingId ID of the listing
-     * @return Listing struct
+     * @return ListingWithTokenURI struct
      */
-    function getListing(uint256 listingId) external view isValidListingId(listingId) returns (Listing memory) {
-        return listings[listingId];
+    function getListingWithTokenURI(uint256 listingId)
+        external
+        view
+        isValidListingId(listingId)
+        returns (ListingWithTokenURI memory)
+    {
+        Listing memory listing = listings[listingId];
+        string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
+
+        return ListingWithTokenURI({
+            listingId: listing.listingId,
+            seller: listing.seller,
+            nftContract: listing.nftContract,
+            tokenId: listing.tokenId,
+            price: listing.price,
+            active: listing.active,
+            listedAt: listing.listedAt,
+            tokenURI: tokenURI
+        });
     }
 
     /**

@@ -31,6 +31,7 @@ contract MarketPlace is ReentrancyGuard {
         uint256 tokenId;
         uint256 price;
         bool active;
+        uint256 listedAt;
     }
 
     mapping(uint256 => Listing) private listings; // (id => Listing)
@@ -83,7 +84,8 @@ contract MarketPlace is ReentrancyGuard {
             nftContract: nftContract,
             tokenId: tokenId,
             price: price,
-            active: true
+            active: true,
+            listedAt: block.timestamp
         });
 
         // emit the listing event
@@ -163,5 +165,73 @@ contract MarketPlace is ReentrancyGuard {
 
         // emit the canceled event
         emit ListingCanceled(listingId);
+    }
+
+    // -------------------------------- View/Pure Functions ---------------------------------------------
+
+    /**
+     * @notice This function return all the listings.
+     * @return array of Listing struct
+     */
+    function getAllListings() external view returns (Listing[] memory) {
+        // create a new array with the size of nextListingId
+        Listing[] memory allListings = new Listing[](nextListingId - 1);
+        // loop through the listings and add to the array
+        for (uint256 i = 0; i < nextListingId - 1; i++) {
+            allListings[i] = listings[i];
+        }
+        return allListings;
+    }
+
+    /**
+     * @notice This function return all the listings of a user.
+     * @param _user address of the user
+     * @return array of Listing struct
+     */
+    function getAllUserListings(address _user) external view returns (Listing[] memory) {
+        uint256 count = 0;
+        // first loop to count the number of listings by the user
+        for (uint256 i = 0; i < nextListingId - 1; i++) {
+            if (listings[i].seller == _user) {
+                count++;
+            }
+        }
+
+        // create a new array with the size of count
+        Listing[] memory userListings = new Listing[](count);
+        uint256 index = 0;
+        // second loop to add the listings to the array
+        for (uint256 i = 0; i < nextListingId - 1; i++) {
+            if (listings[i].seller == _user) {
+                userListings[index] = listings[i];
+                index++;
+            }
+        }
+        return userListings;
+    }
+
+    /**
+     * @notice This function return the listing details.
+     * @param listingId ID of the listing
+     * @return Listing struct
+     */
+    function getListing(uint256 listingId) external view isValidListingId(listingId) returns (Listing memory) {
+        return listings[listingId];
+    }
+
+    /**
+     * @notice This function return the next listing ID.
+     * @return next listing ID
+     */
+    function getNextListingId() external view returns (uint256) {
+        return nextListingId;
+    }
+
+    /**
+     * @notice This function return the marketplace fee percent.
+     * @return fee percent
+     */
+    function getFeePercent() external view returns (uint256) {
+        return feePercent;
     }
 }

@@ -13,13 +13,6 @@ contract CryptoCanvasNFT is ERC721URIStorage {
     event NFTMinted(address indexed creator, uint256 indexed tokenId, string tokenURI);
 
     // -------------------------- State Variables ------------------------------
-    struct NFTs {
-        uint256 tokenId;
-        string tokenURI;
-    }
-
-    mapping(address => NFTs[]) allNFTs; // Mapping to store all NFTs by owner
-
     uint256 private _nextTokenId; // token count
 
     constructor() ERC721("CryptoCanvasNFT", "CCNFT") {}
@@ -36,8 +29,6 @@ contract CryptoCanvasNFT is ERC721URIStorage {
         // Mint the NFT and set the token URI
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
-        // Store the NFT details in the mapping
-        allNFTs[msg.sender].push(NFTs({tokenId: newItemId, tokenURI: tokenURI}));
 
         // Emit the minting event
         emit NFTMinted(msg.sender, newItemId, tokenURI);
@@ -46,24 +37,6 @@ contract CryptoCanvasNFT is ERC721URIStorage {
     }
 
     // -------------------------------- View/Pure Functions ---------------------------------------------
-
-    /**
-     * @notice This function returns the token URI of a specific NFT
-     * @param tokenId ID of the NFT
-     * @return tokenURI URL of the NFT metadata
-     */
-    function getTokenURI(uint256 tokenId) external view returns (string memory) {
-        return tokenURI(tokenId);
-    }
-
-    /**
-     * @notice This function returns all NFTs with tokenURIs that belong to a specific address
-     * @param _user address of the user
-     * @return array of NFTs struct containing tokenId and tokenURI
-     */
-    function getNFTsWithTokenURIByUser(address _user) external view returns (NFTs[] memory) {
-        return allNFTs[_user];
-    }
 
     /**
      * @notice This function returns the total number of minted NFTs

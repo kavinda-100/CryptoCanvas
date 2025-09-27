@@ -235,9 +235,13 @@ contract MarketPlace is ReentrancyGuard {
      * @param _seller address of the user/seller
      * @return array of Active ListingWithTokenURI struct
      */
-    function getUserActiveListingsWithTokenURI(address _seller) external view returns (ListingWithTokenURI[] memory) {
+    function getSellerActiveListingsWithTokenURI(address _seller)
+        external
+        view
+        returns (ListingWithTokenURI[] memory)
+    {
         uint256 count = 0;
-        // first loop to count the number of listings by the user
+        // first loop to count the number of listings by the seller
         for (uint256 i = 0; i < nextListingId; i++) {
             if (listings[i].seller == _seller && listings[i].active && listings[i].buyer == address(0)) {
                 count++;
@@ -275,7 +279,7 @@ contract MarketPlace is ReentrancyGuard {
      * @param _seller address of the user/seller
      * @return array of InActive ListingWithTokenURI struct
      */
-    function getUserInActiveListingsWithTokenURI(address _seller)
+    function getSellerInActiveListingsWithTokenURI(address _seller)
         external
         view
         returns (ListingWithTokenURI[] memory)
@@ -346,7 +350,7 @@ contract MarketPlace is ReentrancyGuard {
      * @param _user address of the user/buyer
      * @return array of purchased ListingWithTokenURI struct
      */
-    function getAllUserPurchasesWithTokenURI(address _user) external view returns (ListingWithTokenURI[] memory) {
+    function getUserPurchasesWithTokenURI(address _user) external view returns (ListingWithTokenURI[] memory) {
         uint256 count = 0;
         // Count purchases (inactive listings where user is the buyer)
         for (uint256 i = 0; i < nextListingId; i++) {

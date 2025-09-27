@@ -28,6 +28,7 @@ contract MarketPlace is ReentrancyGuard {
     struct Listing {
         uint256 listingId;
         address seller;
+        address buyer;
         address nftContract;
         uint256 tokenId;
         uint256 price;
@@ -38,6 +39,7 @@ contract MarketPlace is ReentrancyGuard {
     struct ListingWithTokenURI {
         uint256 listingId;
         address seller;
+        address buyer;
         address nftContract;
         uint256 tokenId;
         uint256 price;
@@ -55,6 +57,7 @@ contract MarketPlace is ReentrancyGuard {
     // -------------------------- constructor ------------------------------
     constructor(address _treasury) {
         treasury = _treasury; // set the treasury address
+        nextListingId = 1; // initialize the listing ID
     }
 
     // -------------------------- modifiers ------------------------------
@@ -64,9 +67,13 @@ contract MarketPlace is ReentrancyGuard {
      * @param listingId ID of the listing
      */
     modifier isValidListingId(uint256 listingId) {
+        // check if there are any listings at all
+        if (nextListingId == 0) {
+            revert MarketPlace__NotValidListingId();
+        }
         // check the listing ID is valid
         // listing ID start from 0 so nextListingId - 1 is the last valid ID
-        if (listingId > nextListingId - 1) {
+        if (listingId >= nextListingId) {
             revert MarketPlace__NotValidListingId();
         }
         _;
@@ -82,7 +89,7 @@ contract MarketPlace is ReentrancyGuard {
      */
     function listNFT(address nftContract, uint256 tokenId, uint256 price) external nonReentrant {
         // check the price
-        if (price < 0) {
+        if (price <= 0) {
             revert MarketPlace__PriceMustBeGraterThanZero();
         }
 
@@ -93,6 +100,7 @@ contract MarketPlace is ReentrancyGuard {
         listings[nextListingId] = Listing({
             listingId: nextListingId,
             seller: msg.sender,
+            buyer: address(0),
             nftContract: nftContract,
             tokenId: tokenId,
             price: price,
@@ -123,10 +131,6 @@ contract MarketPlace is ReentrancyGuard {
         if (msg.value != listing.price) {
             revert MarketPlace__NotEnoughAmount();
         }
-        // mark the listing as inactive
-        listing.active = false;
-        // change the seller to the buyer
-        listing.seller = msg.sender;
 
         // Calculate fee
         uint256 feeAmount = (listing.price * feePercent) / 100;
@@ -146,6 +150,11 @@ contract MarketPlace is ReentrancyGuard {
         if (!success) {
             revert MarketPlace__TransferFailed();
         }
+
+        // change the seller to the buyer after the sale
+        listing.buyer = msg.sender;
+        // mark the listing as inactive after the sale
+        listing.active = false;
 
         // Transfer NFT to buyer
         IERC721(listing.nftContract).transferFrom(address(this), msg.sender, listing.tokenId);
@@ -188,17 +197,26 @@ contract MarketPlace is ReentrancyGuard {
      * @return array of ListingWithTokenURI struct
      */
     function getAllListingsWithTokenURI() external view returns (ListingWithTokenURI[] memory) {
-        // create a new array with the size of nextListingId
-        ListingWithTokenURI[] memory allListings = new ListingWithTokenURI[](nextListingId - 1);
+        // count the number of active listings
+        uint256 activeCount = 0;
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].active) {
+                activeCount++;
+            }
+        }
+        // create a new array with the size of activeCount
+        ListingWithTokenURI[] memory allListings = new ListingWithTokenURI[](activeCount);
+        uint256 index = 0;
         // loop through the listings and add to the array with tokenURI
-        for (uint256 i = 0; i < nextListingId - 1; i++) {
+        for (uint256 i = 0; i < nextListingId; i++) {
             Listing memory listing = listings[i];
             if (listing.active) {
                 string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
 
-                allListings[i] = ListingWithTokenURI({
+                allListings[index] = ListingWithTokenURI({
                     listingId: listing.listingId,
                     seller: listing.seller,
+                    buyer: listing.buyer,
                     nftContract: listing.nftContract,
                     tokenId: listing.tokenId,
                     price: listing.price,
@@ -206,21 +224,22 @@ contract MarketPlace is ReentrancyGuard {
                     listedAt: listing.listedAt,
                     tokenURI: tokenURI
                 });
+                index++;
             }
         }
         return allListings;
     }
 
     /**
-     * @notice This function return all the active listings of a user with tokenURI.
-     * @param _user address of the user
+     * @notice This function return all the active listings of a seller with tokenURI that no one bought yet.
+     * @param _seller address of the user/seller
      * @return array of Active ListingWithTokenURI struct
      */
-    function getAllUserActiveListingsWithTokenURI(address _user) external view returns (ListingWithTokenURI[] memory) {
+    function getUserActiveListingsWithTokenURI(address _seller) external view returns (ListingWithTokenURI[] memory) {
         uint256 count = 0;
         // first loop to count the number of listings by the user
-        for (uint256 i = 0; i < nextListingId - 1; i++) {
-            if (listings[i].seller == _user && listings[i].active) {
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].seller == _seller && listings[i].active && listings[i].buyer == address(0)) {
                 count++;
             }
         }
@@ -229,14 +248,15 @@ contract MarketPlace is ReentrancyGuard {
         ListingWithTokenURI[] memory userListings = new ListingWithTokenURI[](count);
         uint256 index = 0;
         // second loop to add the listings to the array with tokenURI
-        for (uint256 i = 0; i < nextListingId - 1; i++) {
-            if (listings[i].seller == _user && listings[i].active) {
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].seller == _seller && listings[i].active && listings[i].buyer == address(0)) {
                 Listing memory listing = listings[i];
                 string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
 
                 userListings[index] = ListingWithTokenURI({
                     listingId: listing.listingId,
                     seller: listing.seller,
+                    buyer: listing.buyer,
                     nftContract: listing.nftContract,
                     tokenId: listing.tokenId,
                     price: listing.price,
@@ -251,19 +271,19 @@ contract MarketPlace is ReentrancyGuard {
     }
 
     /**
-     * @notice This function return all the inActive listings of a user with tokenURI.
-     * @param _user address of the user
+     * @notice This function return all the inActive listings of a seller with tokenURI that no one bought yet.
+     * @param _seller address of the user/seller
      * @return array of InActive ListingWithTokenURI struct
      */
-    function getAllUserInActiveListingsWithTokenURI(address _user)
+    function getUserInActiveListingsWithTokenURI(address _seller)
         external
         view
         returns (ListingWithTokenURI[] memory)
     {
         uint256 count = 0;
-        // first loop to count the number of listings by the user
-        for (uint256 i = 0; i < nextListingId - 1; i++) {
-            if (listings[i].seller == _user && !listings[i].active) {
+        // first loop to count the number of listings by the seller
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].seller == _seller && !listings[i].active && listings[i].buyer == address(0)) {
                 count++;
             }
         }
@@ -272,14 +292,15 @@ contract MarketPlace is ReentrancyGuard {
         ListingWithTokenURI[] memory userListings = new ListingWithTokenURI[](count);
         uint256 index = 0;
         // second loop to add the listings to the array with tokenURI
-        for (uint256 i = 0; i < nextListingId - 1; i++) {
-            if (listings[i].seller == _user && !listings[i].active) {
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].seller == _seller && !listings[i].active && listings[i].buyer == address(0)) {
                 Listing memory listing = listings[i];
                 string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
 
                 userListings[index] = ListingWithTokenURI({
                     listingId: listing.listingId,
                     seller: listing.seller,
+                    buyer: listing.buyer,
                     nftContract: listing.nftContract,
                     tokenId: listing.tokenId,
                     price: listing.price,
@@ -294,7 +315,7 @@ contract MarketPlace is ReentrancyGuard {
     }
 
     /**
-     * @notice This function return the listing details with tokenURI.
+     * @notice This function return the individual listing details with tokenURI.
      * @param listingId ID of the listing
      * @return ListingWithTokenURI struct
      */
@@ -310,6 +331,7 @@ contract MarketPlace is ReentrancyGuard {
         return ListingWithTokenURI({
             listingId: listing.listingId,
             seller: listing.seller,
+            buyer: listing.buyer,
             nftContract: listing.nftContract,
             tokenId: listing.tokenId,
             price: listing.price,
@@ -317,6 +339,45 @@ contract MarketPlace is ReentrancyGuard {
             listedAt: listing.listedAt,
             tokenURI: tokenURI
         });
+    }
+
+    /**
+     * @notice This function returns all NFTs purchased by a user
+     * @param _user address of the user/buyer
+     * @return array of purchased ListingWithTokenURI struct
+     */
+    function getAllUserPurchasesWithTokenURI(address _user) external view returns (ListingWithTokenURI[] memory) {
+        uint256 count = 0;
+        // Count purchases (inactive listings where user is the buyer)
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].buyer == _user && !listings[i].active && listings[i].buyer != address(0)) {
+                count++;
+            }
+        }
+
+        ListingWithTokenURI[] memory userPurchases = new ListingWithTokenURI[](count);
+        uint256 index = 0;
+
+        for (uint256 i = 0; i < nextListingId; i++) {
+            if (listings[i].buyer == _user && !listings[i].active && listings[i].buyer != address(0)) {
+                Listing memory listing = listings[i];
+                string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
+
+                userPurchases[index] = ListingWithTokenURI({
+                    listingId: listing.listingId,
+                    seller: listing.seller,
+                    buyer: listing.buyer,
+                    nftContract: listing.nftContract,
+                    tokenId: listing.tokenId,
+                    price: listing.price,
+                    active: listing.active,
+                    listedAt: listing.listedAt,
+                    tokenURI: tokenURI
+                });
+                index++;
+            }
+        }
+        return userPurchases;
     }
 
     /**

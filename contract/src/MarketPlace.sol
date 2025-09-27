@@ -10,6 +10,9 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
  * @notice This contract hold the logic of NFT MarketPlace.
  */
 contract MarketPlace is ReentrancyGuard {
+    // -------------------------- Errors ------------------------------
+    error MarketPlace__PriceMustBeGraterThanZero();
+
     // -------------------------- Events ------------------------------
     event NFTListed(uint256 listingId, address seller, address nftContract, uint256 tokenId, uint256 price);
     event NFTSold(uint256 listingId, address buyer);
@@ -17,6 +20,7 @@ contract MarketPlace is ReentrancyGuard {
 
     // -------------------------- State Variables ------------------------------
     struct Listing {
+        uint256 listingId;
         address seller;
         address nftContract;
         uint256 tokenId;
@@ -24,26 +28,42 @@ contract MarketPlace is ReentrancyGuard {
         bool active;
     }
 
-    mapping(uint256 => Listing) public listings;
-    uint256 public nextListingId;
+    mapping(uint256 => Listing) private listings; // (id => Listing)
+    uint256 private nextListingId;
 
-    address public treasury; // treasury contract
-    uint256 public feePercent = 2; // 2% marketplace fee
+    address private treasury; // treasury contract
+    uint256 private feePercent = 2; // 2% marketplace fee
 
     // -------------------------- constructor ------------------------------
     constructor(address _treasury) {
-        treasury = _treasury;
+        treasury = _treasury; // set the treasury address
     }
 
     // -------------------------------- Public/External Functions ---------------------------------------------
+
+    /**
+     * @notice This function add a NFT for listing in the marketplace.
+     * @param nftContract address of the NFT
+     * @param tokenId ID of the NFT
+     * @param price price of the NFT
+     */
     function listNFT(address nftContract, uint256 tokenId, uint256 price) external nonReentrant {
-        require(price > 0, "Price must be greater than 0");
-
+        // check the price
+        if (price < 0) {
+            revert MarketPlace__PriceMustBeGraterThanZero();
+        }
+        // transfer ownership to marketplace form the seller.
         IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
-
-        listings[nextListingId] =
-            Listing({seller: msg.sender, nftContract: nftContract, tokenId: tokenId, price: price, active: true});
-
+        // add to new listing
+        listings[nextListingId] = Listing({
+            listingId: nextListingId,
+            seller: msg.sender,
+            nftContract: nftContract,
+            tokenId: tokenId,
+            price: price,
+            active: true
+        });
+        // emit the listing event
         emit NFTListed(nextListingId, msg.sender, nftContract, tokenId, price);
         nextListingId++;
     }

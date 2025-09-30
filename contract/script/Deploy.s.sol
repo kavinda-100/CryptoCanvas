@@ -33,7 +33,7 @@ contract Deploy is Script {
 
         // Write deployment summary to JSON file for Anvil Local Testnet
         // TODO: Comment out this line if not deploying to Anvil and doing Testing.
-        _writeDeploymentSummaryToJson(address(treasury), address(cryptoCanvasNFT), address(marketPlace));
+        // _writeDeploymentSummaryToJson(address(treasury), address(cryptoCanvasNFT), address(marketPlace));
 
         // Write deployment summary to JSON file for Alchemy Deployments
         // TODO: Comment out this line if not deploying to Alchemy and doing Testing.

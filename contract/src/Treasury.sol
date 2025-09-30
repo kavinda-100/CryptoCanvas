@@ -18,10 +18,10 @@ contract Treasury is Ownable {
     // Withdraw all ETH from treasury
     function withdraw(address to) external onlyOwner {
         // check the balance
-        if (address(this).balance < 0) {
+        if (address(this).balance == 0) {
             revert Treasury__NoFunds();
         }
-        // sen the money
+        // send the money
         (bool success,) = payable(to).call{value: address(this).balance}("");
         // check the success
         if (!success) {

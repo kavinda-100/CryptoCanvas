@@ -14,9 +14,11 @@ contract MarketPlace is ReentrancyGuard {
     // -------------------------- Errors ------------------------------
     error MarketPlace__PriceMustBeGraterThanZero();
     error MarketPlace__NotActive();
+    error MarketPlace__ListingAlreadyActive();
     error MarketPlace__NotEnoughAmount();
     error MarketPlace__TransferFailed();
     error MarketPlace__NotTheSeller();
+    error MarketPlace__NotTheOwnerOfNFT();
     error MarketPlace__NotValidListingId();
 
     // -------------------------- Events ------------------------------
@@ -83,36 +85,40 @@ contract MarketPlace is ReentrancyGuard {
 
     /**
      * @notice This function add a NFT for listing in the marketplace.
-     * @param nftContract address of the NFT
-     * @param tokenId ID of the NFT
-     * @param price price of the NFT
+     * @param _nftContract address of the NFT
+     * @param _tokenId ID of the NFT
+     * @param _price price of the NFT
      */
-    function listNFT(address nftContract, uint256 tokenId, uint256 price) external nonReentrant {
-        // check the price
-        if (price <= 0) {
-            revert MarketPlace__PriceMustBeGraterThanZero();
+    function listNFT(address _nftContract, uint256 _tokenId, uint256 _price) external nonReentrant {
+        // Create new listing (internal function)
+        _listNFT(_nftContract, _tokenId, _price);
+    }
+
+    /**
+     * @notice This function allow a user to relist a purchased NFT.
+     * @param _originalListingId ID of the original listing
+     * @param _newPrice new price for the relisted NFT
+     */
+    function relistPurchasedNFT(uint256 _originalListingId, uint256 _newPrice)
+        external
+        nonReentrant
+        isValidListingId(_originalListingId)
+    {
+        // Get the original listing
+        Listing memory originalListing = listings[_originalListingId];
+
+        // check the caller is the buyer of the original listing
+        if (msg.sender != originalListing.buyer) {
+            revert MarketPlace__NotTheOwnerOfNFT();
         }
 
-        // transfer NFT to marketplace from the seller.
-        IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+        // check the old listing is inactive
+        if (originalListing.active) {
+            revert MarketPlace__ListingAlreadyActive();
+        }
 
-        // add to new listing
-        listings[nextListingId] = Listing({
-            listingId: nextListingId,
-            seller: msg.sender,
-            buyer: address(0),
-            nftContract: nftContract,
-            tokenId: tokenId,
-            price: price,
-            active: true,
-            listedAt: block.timestamp
-        });
-
-        // emit the listing event
-        emit NFTListed(nextListingId, msg.sender, nftContract, tokenId, price);
-
-        // increment the listing ID
-        nextListingId++;
+        // Create new listing (internal function)
+        _listNFT(originalListing.nftContract, originalListing.tokenId, _newPrice);
     }
 
     /**
@@ -188,6 +194,42 @@ contract MarketPlace is ReentrancyGuard {
 
         // emit the canceled event
         emit ListingCanceled(listingId);
+    }
+
+    // -------------------------------- Internal Functions ---------------------------------------------
+
+    /**
+     * @notice This internal function add a NFT for listing in the marketplace.
+     * @param _nftContract address of the NFT
+     * @param _tokenId ID of the NFT
+     * @param _price price of the NFT
+     */
+    function _listNFT(address _nftContract, uint256 _tokenId, uint256 _price) internal nonReentrant {
+        // check the price
+        if (_price <= 0) {
+            revert MarketPlace__PriceMustBeGraterThanZero();
+        }
+
+        // transfer NFT to marketplace from the seller.
+        IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
+
+        // add to new listing
+        listings[nextListingId] = Listing({
+            listingId: nextListingId,
+            seller: msg.sender,
+            buyer: address(0),
+            nftContract: _nftContract,
+            tokenId: _tokenId,
+            price: _price,
+            active: true,
+            listedAt: block.timestamp
+        });
+
+        // emit the listing event
+        emit NFTListed(nextListingId, msg.sender, _nftContract, _tokenId, _price);
+
+        // increment the listing ID
+        nextListingId++;
     }
 
     // -------------------------------- View/Pure Functions ---------------------------------------------
@@ -398,5 +440,13 @@ contract MarketPlace is ReentrancyGuard {
      */
     function getFeePercent() external view returns (uint256) {
         return feePercent;
+    }
+
+    /**
+     * @notice This function set the marketplace fee percent.
+     * @param _newFeePercent new fee percent
+     */
+    function setFeePercent(uint256 _newFeePercent) external {
+        feePercent = _newFeePercent;
     }
 }

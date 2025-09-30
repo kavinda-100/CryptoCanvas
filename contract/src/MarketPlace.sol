@@ -323,7 +323,7 @@ contract MarketPlace is ReentrancyGuard {
      * @param listingId ID of the listing
      * @return ListingWithTokenURI struct
      */
-    function getListingWithTokenURI(uint256 listingId)
+    function getSingleListingWithTokenURI(uint256 listingId)
         external
         view
         isValidListingId(listingId)

@@ -1,0 +1,4 @@
+1 steps for create a NFT
+  - nft.mintNFT("ipfs://example-token-uri");  -> mint the nft -> returns - tokenId
+  - nft.approve(address(marketplace), tokenId);  -> approval of NFT to marketplace
+  - marketplace.listNFT(address(nftContract), tokenId, price));

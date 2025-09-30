@@ -56,7 +56,7 @@ contract Deploy is Script {
         }
 
         // get chain name
-        string memory chainName = this.getChainName();
+        string memory chainName = _getChainName();
 
         // Step 3: Create new JSON file with deployment summary
         string memory json = "deployment_summary";
@@ -91,7 +91,7 @@ contract Deploy is Script {
             console2.log("Existing alchemy deployment file removed.");
         }
 
-        string memory chainName = this.getChainName();
+        string memory chainName = _getChainName();
 
         // Step 3: Create new JSON file with deployment summary
         string memory json = "deployment_summary";
@@ -115,7 +115,7 @@ contract Deploy is Script {
      * @notice This function returns the name of the current blockchain network based on chain ID
      * @return Name of the current blockchain network
      */
-    function getChainName() external view returns (string memory) {
+    function _getChainName() private view returns (string memory) {
         if (block.chainid == 1) {
             return "Ethereum Mainnet";
         } else if (block.chainid == 5) {

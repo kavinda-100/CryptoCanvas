@@ -70,11 +70,11 @@ contract MarketPlace is ReentrancyGuard {
      */
     modifier isValidListingId(uint256 listingId) {
         // check if there are any listings at all
-        if (nextListingId == 0) {
+        if (listingId == 0) {
             revert MarketPlace__NotValidListingId();
         }
         // check the listing ID is valid
-        // listing ID start from 0 so nextListingId - 1 is the last valid ID
+        // listing ID start from 1 so (nextListingId - 1) is the last valid ID
         if (listingId >= nextListingId) {
             revert MarketPlace__NotValidListingId();
         }
@@ -204,7 +204,7 @@ contract MarketPlace is ReentrancyGuard {
      * @param _tokenId ID of the NFT
      * @param _price price of the NFT
      */
-    function _listNFT(address _nftContract, uint256 _tokenId, uint256 _price) internal nonReentrant {
+    function _listNFT(address _nftContract, uint256 _tokenId, uint256 _price) internal {
         // check the price
         if (_price <= 0) {
             revert MarketPlace__PriceMustBeGraterThanZero();
@@ -396,7 +396,7 @@ contract MarketPlace is ReentrancyGuard {
         uint256 count = 0;
         // Count purchases (inactive listings where user is the buyer)
         for (uint256 i = 0; i < nextListingId; i++) {
-            if (listings[i].buyer == _user && !listings[i].active && listings[i].buyer != address(0)) {
+            if (listings[i].buyer == _user && !listings[i].active) {
                 count++;
             }
         }
@@ -405,7 +405,7 @@ contract MarketPlace is ReentrancyGuard {
         uint256 index = 0;
 
         for (uint256 i = 0; i < nextListingId; i++) {
-            if (listings[i].buyer == _user && !listings[i].active && listings[i].buyer != address(0)) {
+            if (listings[i].buyer == _user && !listings[i].active) {
                 Listing memory listing = listings[i];
                 string memory tokenURI = IERC721Metadata(listing.nftContract).tokenURI(listing.tokenId);
 

@@ -203,4 +203,45 @@ contract MarketPlaceTest is Test {
         // verify the user1 balance has increased by the listing price minus fee
         assertEq(address(user1).balance, user1BalanceBefore + sellerAmount);
     }
+
+    /**
+     * @dev Test that buying a listed NFT emits the correct event.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and expects the NFTSold event to be emitted when user2 buys the NFT.
+     */
+    function test_buyNFT_emitEvent() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+
+        // Expect the NFTSold event to be emitted with specific parameters
+        vm.expectEmit(true, true, true, true);
+        emit NFTSold(listingId, user2);
+
+        marketplace.buyNFT{value: price}(listingId);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that buying an NFT fails with an invalid listing ID.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and attempts to buy the NFT with an invalid listing ID, expecting a revert.
+     */
+    function test_buyNFT_with_invalid_listingId() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 zeroListingId = 0; // invalid listing ID (should be > 0, as listing IDs start from 1)
+        uint256 invalidListingId = 999; // non-existent listing ID
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+
+        // Expect the transaction to revert because listingId does not exist
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.buyNFT{value: price}(invalidListingId);
+
+        // Expect the transaction to revert because listingId is zero
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.buyNFT{value: price}(zeroListingId);
+        vm.stopPrank();
+    }
 }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol";
 
@@ -10,7 +11,7 @@ import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/I
  * @author Kavinda Rathnayake
  * @notice This contract hold the logic of NFT MarketPlace.
  */
-contract MarketPlace is ReentrancyGuard {
+contract MarketPlace is ReentrancyGuard, Ownable {
     // -------------------------- Errors ------------------------------
     error MarketPlace__PriceMustBeGraterThanZero();
     error MarketPlace__NFTNotActive();
@@ -57,7 +58,7 @@ contract MarketPlace is ReentrancyGuard {
     uint256 private feePercent = 2; // 2% marketplace fee
 
     // -------------------------- constructor ------------------------------
-    constructor(address _treasury) {
+    constructor(address _treasury) Ownable(msg.sender) {
         treasury = _treasury; // set the treasury address
         nextListingId = 1; // initialize the listing ID
     }
@@ -463,7 +464,7 @@ contract MarketPlace is ReentrancyGuard {
      * @notice This function set the marketplace fee percent.
      * @param _newFeePercent new fee percent
      */
-    function setFeePercent(uint256 _newFeePercent) external {
+    function setFeePercent(uint256 _newFeePercent) external onlyOwner {
         feePercent = _newFeePercent;
     }
 }

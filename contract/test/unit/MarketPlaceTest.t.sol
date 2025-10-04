@@ -572,6 +572,63 @@ contract MarketPlaceTest is Test {
         marketplace.relistPurchasedNFT(listingId, newPrice);
         vm.stopPrank();
     }
+
+    // -------------------------------------- Test `getSingleListingWithTokenURI` --------------------------------------
+
+    /**
+     * @dev Test retrieving a single listing with token URI from the marketplace.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and retrieves the listing details to verify them.
+     */
+    function test_getSingleListingWithTokenURI() external mintAndListNFT(user1, 1) {
+        // retrieve the listing
+        uint256 listingId = 1; // since it's the first listing
+        MarketPlace.ListingWithTokenURI memory listing = marketplace.getSingleListingWithTokenURI(listingId);
+        assertEq(listing.listingId, 1);
+        assertEq(listing.seller, user1);
+        assertEq(listing.buyer, address(0));
+        assertEq(listing.nftContract, address(nft));
+        assertEq(listing.tokenId, 1); // tokenId is 1 since it's the first minted NFT
+        assertEq(listing.price, 1 ether);
+        assertEq(listing.active, true);
+        assertEq(listing.listedAt > 0, true);
+        assertEq(listing.tokenURI, tokenURI);
+    }
+
+    // -------------------------------------- Test `getFeePercent` and `setFeePercent` --------------------------------------
+
+    /**
+     * @dev Test setting and getting the fee percentage for the marketplace.
+     * Verifies that only the owner can set the fee percentage and that it is updated correctly.
+     */
+    function test_setAndGetFeePercent() external {
+        // verify the initial fee percent
+        uint256 initialFeePercent = marketplace.getFeePercent();
+        assertEq(initialFeePercent, 2); // default is 2%
+
+        // set a new fee percent
+        uint256 newFeePercent = 3;
+        address owner = marketplace.owner();
+        vm.prank(owner); // impersonate the owner
+        marketplace.setFeePercent(newFeePercent);
+
+        // verify the updated fee percent
+        uint256 updatedFeePercent = marketplace.getFeePercent();
+        assertEq(updatedFeePercent, newFeePercent);
+    }
+
+    /**
+     * @dev Test that setting the fee percentage fails when called by a non-owner.
+     * Attempts to set the fee percentage as user1 (not the owner), expecting a revert.
+     */
+    function test_try_to_setFeePercent_by_non_owner() external {
+        // Try to set fee percent as user1 (not the owner)
+        vm.startPrank(user1);
+        uint256 newFeePercent = 3;
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, user1));
+        marketplace.setFeePercent(newFeePercent);
+        vm.stopPrank();
+    }
 }
 
 /**

@@ -15,7 +15,9 @@ contract CryptoCanvasNFT is ERC721URIStorage {
     // -------------------------- State Variables ------------------------------
     uint256 private _nextTokenId; // token count
 
-    constructor() ERC721("CryptoCanvasNFT", "CCNFT") {}
+    constructor() ERC721("CryptoCanvasNFT", "CCNFT") {
+        _nextTokenId = 1; // start token IDs from 1
+    }
 
     // -------------------------------- Public/External Functions ---------------------------------------------
 

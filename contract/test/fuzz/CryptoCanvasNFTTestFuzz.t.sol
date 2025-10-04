@@ -30,7 +30,7 @@ contract CryptoCanvasNFTTestFuzz is Test {
         vm.startPrank(_user);
         uint256 tokenId = nft.mintNFT(_tokenURI);
 
-        assertEq(tokenId, 0); // First minted token should have ID 0
+        assertEq(tokenId, 1); // First minted token should have ID 1
         assertEq(nft.ownerOf(tokenId), _user); // Owner should be the user
         assertEq(nft.balanceOf(_user), 1); // User should have 1 NFT
         assertEq(nft.tokenURI(tokenId), _tokenURI); // Token URI should match

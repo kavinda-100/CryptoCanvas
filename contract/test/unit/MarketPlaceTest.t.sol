@@ -87,6 +87,23 @@ contract MarketPlaceTest is Test {
         assertEq(listings[0].listedAt > 0, true);
         assertEq(listings[0].tokenURI, tokenURI);
 
+        // verify the NFT ownership has been transferred to marketplace
+        assertEq(nft.ownerOf(1), address(marketplace)); // tokenId is 1 since it's the first minted NFT
+
+        // verify the new listed NFT is in the seller's listings
+        MarketPlace.ListingWithTokenURI[] memory listingsOfSeller =
+            marketplace.getSellerActiveListingsWithTokenURI(user1);
+        assertEq(listingsOfSeller.length, 1);
+        assertEq(listingsOfSeller[0].listingId, listings[0].listingId);
+        assertEq(listingsOfSeller[0].seller, listings[0].seller);
+        assertEq(listingsOfSeller[0].buyer, listings[0].buyer);
+        assertEq(listingsOfSeller[0].nftContract, listings[0].nftContract);
+        assertEq(listingsOfSeller[0].tokenId, listings[0].tokenId);
+        assertEq(listingsOfSeller[0].price, listings[0].price);
+        assertEq(listingsOfSeller[0].active, listings[0].active);
+        assertEq(listingsOfSeller[0].listedAt, listings[0].listedAt);
+        assertEq(listingsOfSeller[0].tokenURI, listings[0].tokenURI);
+
         // check the next listing ID
         assertEq(marketplace.getNextListingId(), listings[0].listingId + 1);
     }
@@ -162,14 +179,14 @@ contract MarketPlaceTest is Test {
         assertEq(listings[0].seller, user1);
         assertEq(listings[0].buyer, user2);
         assertEq(listings[0].nftContract, address(nft));
-        assertEq(listings[0].tokenId, 0);
+        assertEq(listings[0].tokenId, 1); // tokenId is 1 since it's the first minted NFT
         assertEq(listings[0].price, price);
         assertEq(listings[0].active, false);
         assertEq(listings[0].listedAt > 0, true);
         assertEq(listings[0].tokenURI, tokenURI);
 
         // verify the NFT ownership has been transferred to user2
-        assertEq(nft.ownerOf(0), user2); // tokenId is 0 since it's the first minted NFT
+        assertEq(nft.ownerOf(1), user2); // tokenId is 1 since it's the first minted NFT
 
         // verify the marketplace balance is zero
         assertEq(address(marketplace).balance, 0);

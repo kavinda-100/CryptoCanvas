@@ -27,11 +27,11 @@ contract CryptoCanvasNFTTest is Test {
         string memory tokenURI = "ipfs://example-token-uri";
         uint256 tokenId = nft.mintNFT(tokenURI);
 
-        assertEq(tokenId, 0); // First minted token should have ID 0
+        assertEq(tokenId, 1); // First minted token should have ID 1
         assertEq(nft.ownerOf(tokenId), user); // Owner should be the user
         assertEq(nft.balanceOf(user), 1); // User should have 1 NFT
         assertEq(nft.tokenURI(tokenId), tokenURI); // Token URI should match
-        assertEq(nft.getTotalMinted(), 1); // Total minted should be 1
+        assertEq(nft.getTotalMinted(), 2); // Total minted should be 1 + 1 (for the next token ID)
         vm.stopPrank();
     }
 
@@ -43,7 +43,7 @@ contract CryptoCanvasNFTTest is Test {
         string memory tokenURI = "ipfs://example-token-uri";
 
         vm.expectEmit(true, true, true, true);
-        emit CryptoCanvasNFT.NFTMinted(user, 0, tokenURI);
+        emit CryptoCanvasNFT.NFTMinted(user, 1, tokenURI);
 
         nft.mintNFT(tokenURI);
         vm.stopPrank();

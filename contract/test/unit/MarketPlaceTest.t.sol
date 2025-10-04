@@ -279,6 +279,61 @@ contract MarketPlaceTest is Test {
         marketplace.buyNFT{value: insufficientPrice}(listingId);
         vm.stopPrank();
     }
+
+    /**
+     * @dev Test that buying an NFT fails when seller transfer fails.
+     * Uses a contract that rejects Ether transfers as the seller.
+     */
+    function test_buyNFT_fails_when_seller_transfer_fails() external {
+        // Deploy a fake account that rejects Ether
+        FakeAccount fakeAccount = new FakeAccount();
+        address fakeSeller = address(fakeAccount);
+
+        // Fund the fake account to pay for minting and gas
+        vm.deal(fakeSeller, 1 ether);
+
+        // Mint and list NFT using the fake account as seller
+        vm.startPrank(fakeSeller);
+        uint256 tokenId = nft.mintNFT(tokenURI);
+        nft.approve(address(marketplace), tokenId);
+        marketplace.listNFT(address(nft), tokenId, 1 ether);
+        vm.stopPrank();
+
+        // Try to buy the NFT - should fail when trying to pay the fake seller
+        vm.startPrank(user2);
+        uint256 listingId = 1;
+
+        vm.expectRevert(MarketPlace.MarketPlace__TransferFailed.selector);
+        marketplace.buyNFT{value: 1 ether}(listingId);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that buying an NFT fails when treasury transfer fails.
+     * This test uses a modified setup where treasury is a contract that rejects Ether.
+     */
+    function test_buyNFT_fails_when_treasury_transfer_fails() external {
+        // Deploy a fake treasury that rejects Ether
+        FakeAccount fakeTreasury = new FakeAccount();
+
+        // Deploy a new marketplace with the fake treasury
+        MarketPlace marketplaceWithFakeTreasury = new MarketPlace(address(fakeTreasury));
+
+        // Mint NFT to user1
+        vm.startPrank(user1);
+        uint256 tokenId = nft.mintNFT(tokenURI);
+        nft.approve(address(marketplaceWithFakeTreasury), tokenId);
+        marketplaceWithFakeTreasury.listNFT(address(nft), tokenId, 1 ether);
+        vm.stopPrank();
+
+        // Try to buy the NFT - should fail when trying to pay the fake treasury
+        vm.startPrank(user2);
+        uint256 listingId = 1;
+
+        vm.expectRevert(MarketPlace.MarketPlace__TransferFailed.selector);
+        marketplaceWithFakeTreasury.buyNFT{value: 1 ether}(listingId);
+        vm.stopPrank();
+    }
 }
 
 /**
@@ -286,4 +341,13 @@ contract MarketPlaceTest is Test {
  * @author Kavinda Rathnayake
  * @notice This contract is a fake account for testing purposes. (reverts on receiving Ether)
  */
-contract FakeAccount {}
+contract FakeAccount {
+    // Reject all Ether transfers
+    receive() external payable {
+        revert("FakeAccount: Cannot receive Ether");
+    }
+
+    fallback() external payable {
+        revert("FakeAccount: Cannot receive Ether");
+    }
+}

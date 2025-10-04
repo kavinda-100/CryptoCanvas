@@ -495,6 +495,36 @@ contract MarketPlaceTest is Test {
         assertEq(listingsOfSeller[0].listingId, listings[0].listingId);
         assertEq(listingsOfSeller[0].seller, listings[0].seller);
     }
+
+    /**
+     * @dev Test that relisting a purchased NFT emits the correct event.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, and expects the NFTListed event to be emitted when user2 relists the purchased NFT.
+     */
+    function test_relistPurchasedNFT_emitEvent() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+        marketplace.buyNFT{value: price}(listingId);
+        vm.stopPrank();
+
+        // relist the purchased NFT as user2
+        vm.startPrank(user2);
+        uint256 newPrice = 2 ether;
+
+        // IMPORTANT: user2 needs to approve the marketplace before relisting
+        nft.approve(address(marketplace), 1); // tokenId is 1
+
+        // Expect the NFTListed event to be emitted with specific parameters
+        vm.expectEmit(true, true, true, true);
+        emit NFTListed(1, user2, address(nft), 1, newPrice); // listingId is 1 (reused), tokenId is 1
+
+        /// pass the original listingId and newPrice
+        /// so it updates the existing listing with new details
+        marketplace.relistPurchasedNFT(listingId, newPrice);
+        vm.stopPrank();
+    }
 }
 
 /**

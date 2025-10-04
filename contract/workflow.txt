@@ -2,3 +2,8 @@
   - nft.mintNFT("ipfs://example-token-uri");  -> mint the nft -> returns - tokenId
   - nft.approve(address(marketplace), tokenId);  -> approval of NFT to marketplace
   - marketplace.listNFT(address(nftContract), tokenId, price));
+
+2 steps for reList a NFT
+  - nft.relistPurchasedNFT(oldListingId, newPrice);
+  - nft.approve(address(marketplace), tokenId);  -> approval of NFT to marketplace
+  - marketplace.listNFT(address(nftContract), tokenId, price));

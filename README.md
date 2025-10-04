@@ -278,10 +278,40 @@ _📝 Note: Addresses may vary between deployments. Check `deployment-summary.js
 
 ### 🔗 Project Links
 
-- **Repository**: [https://github.com/kavinda-100/CryptoCanvas](https://github.com/kavinda-100/CryptoCanvas)
-- **Smart Contracts**: [./contract/README.md](./contract/README.md)
-- **Frontend**: Coming Soon
-- **Documentation**: [Foundry Book](https://book.getfoundry.sh/)
+| Component                | Link                                                  | Status            | Description                         |
+| ------------------------ | ----------------------------------------------------- | ----------------- | ----------------------------------- |
+| 📦 **Repository**        | [GitHub](https://github.com/kavinda-100/CryptoCanvas) | ✅ Active         | Main project repository             |
+| 🏗️ **Smart Contracts**   | [./contract/README.md](./contract/README.md)          | ✅ Complete       | Contract documentation & deployment |
+| 🎨 **Frontend (UI)**     | [./UI/README.md](./UI/README.md)                      | 🚧 In Development | React.js application (Coming Soon)  |
+| 📞 **Contact & Support** | [./contact/README.md](./contact/README.md)            | 📋 Planned        | Community guidelines & support      |
+| 📚 **Documentation**     | [Foundry Book](https://book.getfoundry.sh/)           | ✅ Active         | Development framework docs          |
+| 🔧 **OpenZeppelin**      | [Contracts](https://openzeppelin.com/contracts/)      | ✅ Active         | Security library documentation      |
+
+## 📂 Project Structure & Navigation
+
+<div align="center">
+  <h3>🗂️ Repository Organization</h3>
+  <p><em>Navigate through different components of CryptoCanvas</em></p>
+</div>
+
+| Folder                          | Description                   | Documentation                  | Status            |
+| ------------------------------- | ----------------------------- | ------------------------------ | ----------------- |
+| 🏗️ **[contract/](./contract/)** | Smart contracts & deployment  | [README](./contract/README.md) | ✅ Complete       |
+| 🎨 **[UI/](./UI/)**             | Frontend React.js application | [README](./UI/README.md)       | 🚧 In Development |
+| 📸 **[imgs/](./imgs/)**         | Project assets & branding     | Visual showcase above          | ✅ Complete       |
+| 📞 **[contact/](./contact/)**   | Support & community info      | [README](./contact/README.md)  | 📋 Planned        |
+| 📄 **[LICENSE](./LICENSE)**     | MIT License terms             | License file                   | ✅ Complete       |
+
+### 🚀 Quick Navigation
+
+| I want to...              | Go to...                                                                       | Status         |
+| ------------------------- | ------------------------------------------------------------------------------ | -------------- |
+| 🔨 **Deploy contracts**   | [contract/README.md](./contract/README.md)                                     | ✅ Ready       |
+| 🎨 **Setup frontend**     | [UI/README.md](./UI/README.md)                                                 | 🚧 Coming Soon |
+| 📊 **View test coverage** | [contract/README.md#testing--coverage](./contract/README.md#testing--coverage) | ✅ Ready       |
+| 📋 **See API reference**  | [contract/README.md#api-reference](./contract/README.md#api-reference)         | ✅ Ready       |
+| 🤝 **Get support**        | [contact/README.md](./contact/README.md)                                       | 📋 Coming Soon |
+| 🎯 **Report issues**      | [GitHub Issues](https://github.com/kavinda-100/CryptoCanvas/issues)            | ✅ Ready       |
 
 ### 👨‍💻 Developer Contact
 

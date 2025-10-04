@@ -334,6 +334,113 @@ contract MarketPlaceTest is Test {
         marketplaceWithFakeTreasury.buyNFT{value: 1 ether}(listingId);
         vm.stopPrank();
     }
+
+    // -------------------------------------- Test `cancelListing` function --------------------------------------
+
+    /**
+     * @dev Test canceling a listed NFT on the marketplace.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, cancels the listing, and verifies the cancellation details.
+     */
+    function test_cancelListing() external mintAndListNFT(user1, 1) {
+        // cancel the listing as user1
+        vm.startPrank(user1);
+        uint256 listingId = 1; // since it's the first listing
+        marketplace.cancelListing(listingId);
+        vm.stopPrank();
+
+        // verify the listing is no longer in the all active listings
+        MarketPlace.ListingWithTokenURI[] memory listings = marketplace.getAllListingsWithTokenURI();
+        assertEq(listings.length, 0); // No active listings in the marketplace
+
+        // verify the NFT ownership has been transferred back to user1
+        assertEq(nft.ownerOf(1), user1); // tokenId is 1
+
+        // verify the canceled NFT is not in the seller's active listings
+        MarketPlace.ListingWithTokenURI[] memory listingsOfSeller =
+            marketplace.getSellerActiveListingsWithTokenURI(user1);
+        assertEq(listingsOfSeller.length, 0);
+
+        // verify the canceled NFT is in the seller's inactive listings
+        MarketPlace.ListingWithTokenURI[] memory inactiveListingsOfSeller =
+            marketplace.getSellerInActiveListingsWithTokenURI(user1);
+        assertEq(inactiveListingsOfSeller.length, 1);
+        assertEq(inactiveListingsOfSeller[0].listingId, 1);
+        assertEq(inactiveListingsOfSeller[0].seller, user1);
+        assertEq(inactiveListingsOfSeller[0].active, false);
+    }
+
+    /**
+     * @dev Test that canceling a listing emits the correct event.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and expects the ListingCanceled event to be emitted when user1 cancels the listing.
+     */
+    function test_cancelListing_emitEvent() external mintAndListNFT(user1, 1) {
+        // cancel the listing as user1
+        vm.startPrank(user1);
+        uint256 listingId = 1; // since it's the first listing
+
+        // Expect the ListingCanceled event to be emitted with specific parameters
+        vm.expectEmit(true, true, true, true);
+        emit ListingCanceled(listingId);
+
+        marketplace.cancelListing(listingId);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that canceling a listing fails with an invalid listing ID.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and attempts to cancel the listing with an invalid listing ID, expecting a revert.
+     */
+    function test_try_to_cancelListing_with_invalid_listingId() external mintAndListNFT(user1, 1) {
+        // cancel the listing as user1
+        vm.startPrank(user1);
+        uint256 zeroListingId = 0; // invalid listing ID (should be > 0, as listing IDs start from 1)
+        uint256 invalidListingId = 999; // non-existent listing ID
+
+        // Expect the transaction to revert because listingId does not exist
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.cancelListing(invalidListingId);
+
+        // Expect the transaction to revert because listingId is zero
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.cancelListing(zeroListingId);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that canceling a listing fails when the listing is not active.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, cancels the listing, and then attempts to cancel the same listing again, expecting a revert.
+     */
+    function test_try_to_cancelListing_when_it_not_active() external mintAndListNFT(user1, 1) {
+        // cancel the listing as user1
+        vm.startPrank(user1);
+        uint256 listingId = 1; // since it's the first listing
+        marketplace.cancelListing(listingId);
+
+        // Try to cancel again when not active
+        vm.expectRevert(MarketPlace.MarketPlace__NFTNotActive.selector);
+        marketplace.cancelListing(listingId);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that canceling a listing fails when called by a non-seller.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and attempts to cancel the listing as user2 (not the seller), expecting a revert.
+     */
+    function test_try_to_cancelListing_by_non_seller() external mintAndListNFT(user1, 1) {
+        // Try to cancel the listing as user2 (not the seller)
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+
+        // Expect the transaction to revert due to unauthorized access
+        vm.expectRevert(MarketPlace.MarketPlace__NotTheSeller.selector);
+        marketplace.cancelListing(listingId);
+        vm.stopPrank();
+    }
 }
 
 /**

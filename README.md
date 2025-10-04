@@ -267,10 +267,6 @@ _📝 Note: Addresses may vary between deployments. Check `deployment-summary.js
 | 💸 `NFTSold`          | `listingId`, `buyer`, `seller`, `price`   | NFT is purchased       |
 | 🚫 `ListingCancelled` | `listingId`, `seller`                     | Listing is cancelled   |
 
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how you can help:
-
 ### 🛠️ Development Guidelines
 
 | Category             | Requirement                      | Status      |
@@ -279,14 +275,6 @@ We welcome contributions from the community! Here's how you can help:
 | 🧪 **Testing**       | Maintain 100% test coverage      | ✅ Required |
 | 📖 **Documentation** | Add comprehensive docs           | ✅ Required |
 | 📝 **Commits**       | Use conventional commit messages | ✅ Required |
-
-### � Contribution Steps
-
-1. **🍴 Fork** the repository
-2. **🌿 Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **💾 Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **📤 Push** to the branch (`git push origin feature/amazing-feature`)
-5. **🔄 Open** a Pull Request
 
 ### 🔗 Project Links
 

@@ -14,6 +14,7 @@ contract MarketPlaceTest is Test {
     MarketPlace private marketplace;
     address public user1 = makeAddr("user");
     address public user2 = makeAddr("user2");
+    string constant tokenURI = "ipfs://example-token-uri";
 
     // -------------------------- Events ------------------------------
     event NFTListed(uint256 listingId, address seller, address nftContract, uint256 tokenId, uint256 price);
@@ -42,7 +43,6 @@ contract MarketPlaceTest is Test {
         _price = _price * 1 ether;
         // mint an NFT to user1 and approve marketplace to transfer the NFT
         vm.startPrank(_user);
-        string memory tokenURI = "ipfs://example-token-uri";
         uint256 tokenId = nft.mintNFT(tokenURI);
         nft.approve(address(marketplace), tokenId);
 
@@ -64,7 +64,6 @@ contract MarketPlaceTest is Test {
     function test_listNFT() external {
         // mint an NFT to user1 and approve marketplace to transfer the NFT
         vm.startPrank(user1);
-        string memory tokenURI = "ipfs://example-token-uri";
         uint256 tokenId = nft.mintNFT(tokenURI);
         nft.approve(address(marketplace), tokenId);
         vm.stopPrank();
@@ -100,7 +99,6 @@ contract MarketPlaceTest is Test {
     function test_listNFT_emitEvent() external {
         // mint an NFT to user1 and approve marketplace to transfer the NFT
         vm.startPrank(user1);
-        string memory tokenURI = "ipfs://example-token-uri";
         uint256 tokenId = nft.mintNFT(tokenURI);
         nft.approve(address(marketplace), tokenId);
         vm.stopPrank();
@@ -125,7 +123,6 @@ contract MarketPlaceTest is Test {
     function test_listNFT_failIf_PriceIsZero() external {
         // mint an NFT to user1 and approve marketplace to transfer the NFT
         vm.startPrank(user1);
-        string memory tokenURI = "ipfs://example-token-uri";
         uint256 tokenId = nft.mintNFT(tokenURI);
         nft.approve(address(marketplace), tokenId);
         vm.stopPrank();
@@ -138,5 +135,55 @@ contract MarketPlaceTest is Test {
         vm.expectRevert(MarketPlace.MarketPlace__PriceMustBeGraterThanZero.selector);
         marketplace.listNFT(address(nft), tokenId, price);
         vm.stopPrank();
+    }
+
+    // -------------------------------------- Test `buyNFT` function --------------------------------------
+
+    /**
+     * @dev Test buying a listed NFT from the marketplace.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, and verifies the purchase details.
+     */
+    function test_buyNFT() external mintAndListNFT(user1, 1) {
+        // Record user1's balance BEFORE the sale
+        uint256 user1BalanceBefore = address(user1).balance;
+
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+        marketplace.buyNFT{value: price}(listingId);
+        vm.stopPrank();
+
+        // verify the listing
+        MarketPlace.ListingWithTokenURI[] memory listings = marketplace.getUserPurchasesWithTokenURI(user2);
+        assertEq(listings.length, 1);
+        assertEq(listings[0].listingId, 1);
+        assertEq(listings[0].seller, user1);
+        assertEq(listings[0].buyer, user2);
+        assertEq(listings[0].nftContract, address(nft));
+        assertEq(listings[0].tokenId, 0);
+        assertEq(listings[0].price, price);
+        assertEq(listings[0].active, false);
+        assertEq(listings[0].listedAt > 0, true);
+        assertEq(listings[0].tokenURI, tokenURI);
+
+        // verify the NFT ownership has been transferred to user2
+        assertEq(nft.ownerOf(0), user2); // tokenId is 0 since it's the first minted NFT
+
+        // verify the marketplace balance is zero
+        assertEq(address(marketplace).balance, 0);
+
+        // Calculate fee
+        uint256 feeAmount = (listings[0].price * marketplace.getFeePercent()) / 100; // for treasury
+        // Calculate seller amount
+        uint256 sellerAmount = listings[0].price - feeAmount; // for seller
+
+        // verify the treasury balance has increased by the listing price
+        // Total feeAmount should be equal to the treasury balance
+        assertEq(address(treasury).balance, feeAmount);
+
+        // verify the user1 balance has increased by the listing price minus fee
+        assertEq(address(user1).balance, user1BalanceBefore + sellerAmount);
     }
 }

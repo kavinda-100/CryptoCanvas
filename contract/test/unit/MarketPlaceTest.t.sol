@@ -441,6 +441,60 @@ contract MarketPlaceTest is Test {
         marketplace.cancelListing(listingId);
         vm.stopPrank();
     }
+
+    // -------------------------------------- Test `relistPurchasedNFT` --------------------------------------
+
+    /**
+     * @dev Test relisting a purchased NFT on the marketplace.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, relists the purchased NFT, and verifies the new listing details.
+     */
+    function test_relistPurchasedNFT() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing (original listingId)
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+        marketplace.buyNFT{value: price}(listingId);
+        vm.stopPrank();
+
+        // relist the purchased NFT as user2
+        vm.startPrank(user2);
+        uint256 newPrice = 2 ether;
+
+        // IMPORTANT: user2 needs to approve the marketplace before relisting
+        nft.approve(address(marketplace), 1); // tokenId is 1
+
+        /// pass the original listingId and newPrice
+        /// so it updates the existing listing with new details
+        marketplace.relistPurchasedNFT(listingId, newPrice);
+        vm.stopPrank();
+
+        // verify the new listing
+        MarketPlace.ListingWithTokenURI[] memory listings = marketplace.getAllListingsWithTokenURI();
+        assertEq(listings.length, 1);
+        assertEq(listings[0].listingId, 1); // reused original listingId (1)
+        assertEq(listings[0].seller, user2); // new seller should be user2
+        assertEq(listings[0].buyer, address(0)); // buyer should be address(0) since it's relisted
+        assertEq(listings[0].nftContract, address(nft));
+        assertEq(listings[0].tokenId, 1); // tokenId is 1 since it's the first minted NFT
+        assertEq(listings[0].price, newPrice); // price should be the new price
+        assertEq(listings[0].active, true); // should be active
+        assertEq(listings[0].listedAt > 0, true);
+        assertEq(listings[0].tokenURI, tokenURI);
+
+        // verify the next listing ID remains 2 (unchanged since we reused existing ID)
+        assertEq(marketplace.getNextListingId(), 2);
+
+        // verify the NFT ownership has been transferred to marketplace
+        assertEq(nft.ownerOf(1), address(marketplace)); // tokenId is 1 since it's the first minted NFT
+
+        // verify the new listed NFT is in the new seller's listings
+        MarketPlace.ListingWithTokenURI[] memory listingsOfSeller =
+            marketplace.getSellerActiveListingsWithTokenURI(user2);
+        assertEq(listingsOfSeller.length, 1);
+        assertEq(listingsOfSeller[0].listingId, listings[0].listingId);
+        assertEq(listingsOfSeller[0].seller, listings[0].seller);
+    }
 }
 
 /**

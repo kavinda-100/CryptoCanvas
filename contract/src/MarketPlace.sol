@@ -91,7 +91,7 @@ contract MarketPlace is ReentrancyGuard {
      */
     function listNFT(address _nftContract, uint256 _tokenId, uint256 _price) external nonReentrant {
         // Create new listing (internal function)
-        _listNFT(_nftContract, _tokenId, _price);
+        _listNFT(_nftContract, _tokenId, _price, false, 0);
     }
 
     /**
@@ -118,7 +118,7 @@ contract MarketPlace is ReentrancyGuard {
         }
 
         // Create new listing (internal function)
-        _listNFT(originalListing.nftContract, originalListing.tokenId, _newPrice);
+        _listNFT(originalListing.nftContract, originalListing.tokenId, _newPrice, true, _originalListingId);
     }
 
     /**
@@ -204,7 +204,13 @@ contract MarketPlace is ReentrancyGuard {
      * @param _tokenId ID of the NFT
      * @param _price price of the NFT
      */
-    function _listNFT(address _nftContract, uint256 _tokenId, uint256 _price) internal {
+    function _listNFT(
+        address _nftContract,
+        uint256 _tokenId,
+        uint256 _price,
+        bool _isRelist,
+        uint256 _originalListingId
+    ) internal {
         // check the price
         if (_price <= 0) {
             revert MarketPlace__PriceMustBeGraterThanZero();
@@ -214,22 +220,38 @@ contract MarketPlace is ReentrancyGuard {
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
 
         // add to new listing
-        listings[nextListingId] = Listing({
-            listingId: nextListingId,
-            seller: msg.sender,
-            buyer: address(0),
-            nftContract: _nftContract,
-            tokenId: _tokenId,
-            price: _price,
-            active: true,
-            listedAt: block.timestamp
-        });
+        if (_isRelist) {
+            listings[_originalListingId] = Listing({
+                listingId: _originalListingId,
+                seller: msg.sender,
+                buyer: address(0),
+                nftContract: _nftContract,
+                tokenId: _tokenId,
+                price: _price,
+                active: true,
+                listedAt: block.timestamp
+            });
 
-        // emit the listing event
-        emit NFTListed(nextListingId, msg.sender, _nftContract, _tokenId, _price);
+            // emit the listing event with original listing ID
+            emit NFTListed(_originalListingId, msg.sender, _nftContract, _tokenId, _price);
+        } else {
+            listings[nextListingId] = Listing({
+                listingId: nextListingId,
+                seller: msg.sender,
+                buyer: address(0),
+                nftContract: _nftContract,
+                tokenId: _tokenId,
+                price: _price,
+                active: true,
+                listedAt: block.timestamp
+            });
 
-        // increment the listing ID
-        nextListingId++;
+            // emit the listing event with new listing ID
+            emit NFTListed(nextListingId, msg.sender, _nftContract, _tokenId, _price);
+
+            // increment the listing ID only for new listings
+            nextListingId++;
+        }
     }
 
     // -------------------------------- View/Pure Functions ---------------------------------------------

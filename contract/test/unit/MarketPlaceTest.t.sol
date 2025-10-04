@@ -629,6 +629,76 @@ contract MarketPlaceTest is Test {
         marketplace.setFeePercent(newFeePercent);
         vm.stopPrank();
     }
+
+    // -------------------------------------- Test Invalid Listing ID Coverage --------------------------------------
+
+    /**
+     * @dev Test that using listing ID zero fails in buyNFT function.
+     * Tests the isValidListingId modifier's first condition (listingId == 0).
+     */
+    function test_buyNFT_with_zero_listingId() external {
+        // Try to buy with listing ID 0 (should fail)
+        vm.startPrank(user2);
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.buyNFT{value: 1 ether}(0);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that using non-existent listing ID fails in buyNFT function.
+     * Tests the isValidListingId modifier's second condition (listingId >= nextListingId).
+     */
+    function test_buyNFT_with_nonexistent_listingId() external {
+        // Try to buy with listing ID 999 when no listings exist (should fail)
+        vm.startPrank(user2);
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.buyNFT{value: 1 ether}(999);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that using listing ID zero fails in cancelListing function.
+     * Additional coverage for the isValidListingId modifier's first condition.
+     */
+    function test_cancelListing_with_zero_listingId() external {
+        // Try to cancel with listing ID 0 (should fail)
+        vm.startPrank(user1);
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.cancelListing(0);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that using non-existent listing ID fails in cancelListing function.
+     * Additional coverage for the isValidListingId modifier's second condition.
+     */
+    function test_cancelListing_with_nonexistent_listingId() external {
+        // Try to cancel with listing ID 999 when no listings exist (should fail)
+        vm.startPrank(user1);
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.cancelListing(999);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that using listing ID zero fails in getSingleListingWithTokenURI function.
+     * Additional coverage for the isValidListingId modifier's first condition.
+     */
+    function test_getSingleListingWithTokenURI_with_zero_listingId() external {
+        // Try to get single listing with ID 0 (should fail)
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.getSingleListingWithTokenURI(0);
+    }
+
+    /**
+     * @dev Test that using non-existent listing ID fails in getSingleListingWithTokenURI function.
+     * Additional coverage for the isValidListingId modifier's second condition.
+     */
+    function test_getSingleListingWithTokenURI_with_nonexistent_listingId() external {
+        // Try to get single listing with ID 999 when no listings exist (should fail)
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.getSingleListingWithTokenURI(999);
+    }
 }
 
 /**

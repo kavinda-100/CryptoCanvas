@@ -262,4 +262,28 @@ contract MarketPlaceTest is Test {
         marketplace.buyNFT{value: price}(listingId);
         vm.stopPrank();
     }
+
+    /**
+     * @dev Test that buying an NFT fails when insufficient funds are sent.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, and attempts to buy the NFT as user2 with insufficient funds, expecting a revert.
+     */
+    function test_try_to_buyNFT_with_insufficient_funds() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 insufficientPrice = 0.5 ether; // less than the listing price of 1 ether
+
+        // Expect the transaction to revert due to insufficient funds
+        vm.expectRevert(MarketPlace.MarketPlace__NotEnoughAmount.selector);
+        marketplace.buyNFT{value: insufficientPrice}(listingId);
+        vm.stopPrank();
+    }
 }
+
+/**
+ * @title FakeAccount
+ * @author Kavinda Rathnayake
+ * @notice This contract is a fake account for testing purposes. (reverts on receiving Ether)
+ */
+contract FakeAccount {}

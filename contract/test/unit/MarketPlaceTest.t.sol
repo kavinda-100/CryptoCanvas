@@ -525,6 +525,53 @@ contract MarketPlaceTest is Test {
         marketplace.relistPurchasedNFT(listingId, newPrice);
         vm.stopPrank();
     }
+
+    /**
+     * @dev Test that relisting a purchased NFT fails with an invalid listing ID.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, and attempts to relist the purchased NFT with an invalid listing ID, expecting a revert.
+     */
+    function test_try_to_relistPurchasedNFT_with_invalid_listingId() external {
+        // Try to relist with invalid listingId as user2
+        vm.startPrank(user2);
+        uint256 zeroListingId = 0; // invalid listing ID (should be > 0, as listing IDs start from 1)
+        uint256 invalidListingId = 999; // non-existent listing ID
+        uint256 newPrice = 2 ether;
+
+        // Expect the transaction to revert because listingId does not exist
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.relistPurchasedNFT(invalidListingId, newPrice);
+
+        // Expect the transaction to revert because listingId is zero
+        vm.expectRevert(MarketPlace.MarketPlace__NotValidListingId.selector);
+        marketplace.relistPurchasedNFT(zeroListingId, newPrice);
+        vm.stopPrank();
+    }
+
+    /**
+     * @dev Test that relisting a purchased NFT fails when called by a non-owner.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, and attempts to relist the purchased NFT as user1 (not the buyer), expecting a revert.
+     */
+    function test_try_to_relistPurchasedNFT_by_non_buyer() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+        marketplace.buyNFT{value: price}(listingId);
+        // IMPORTANT: user2 needs to approve the marketplace before relisting
+        nft.approve(address(marketplace), 1); // tokenId is 1
+        vm.stopPrank();
+
+        // Try to relist the purchased NFT as user1 (not the buyer)
+        vm.startPrank(user1);
+        uint256 newPrice = 2 ether;
+
+        // Expect the transaction to revert due to unauthorized access
+        vm.expectRevert(MarketPlace.MarketPlace__NotTheOwnerOfNFT.selector);
+        marketplace.relistPurchasedNFT(listingId, newPrice);
+        vm.stopPrank();
+    }
 }
 
 /**

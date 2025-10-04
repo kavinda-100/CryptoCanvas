@@ -112,11 +112,6 @@ contract MarketPlace is ReentrancyGuard {
             revert MarketPlace__NotTheOwnerOfNFT();
         }
 
-        // check the old listing is inactive
-        if (originalListing.active) {
-            revert MarketPlace__ListingAlreadyActive();
-        }
-
         // Create new listing (internal function)
         _listNFT(originalListing.nftContract, originalListing.tokenId, _newPrice, true, _originalListingId);
     }

@@ -13,7 +13,7 @@ import {IERC721Metadata} from "@openzeppelin/contracts/token/ERC721/extensions/I
 contract MarketPlace is ReentrancyGuard {
     // -------------------------- Errors ------------------------------
     error MarketPlace__PriceMustBeGraterThanZero();
-    error MarketPlace__NotActive();
+    error MarketPlace__NFTNotActive();
     error MarketPlace__ListingAlreadyActive();
     error MarketPlace__NotEnoughAmount();
     error MarketPlace__TransferFailed();
@@ -131,7 +131,7 @@ contract MarketPlace is ReentrancyGuard {
 
         // check the listing is active.
         if (!listing.active) {
-            revert MarketPlace__NotActive();
+            revert MarketPlace__NFTNotActive();
         }
         // check the buyer has sent enough funds.
         if (msg.value != listing.price) {
@@ -179,7 +179,7 @@ contract MarketPlace is ReentrancyGuard {
 
         // check the listing is active.
         if (!listing.active) {
-            revert MarketPlace__NotActive();
+            revert MarketPlace__NFTNotActive();
         }
         // check the caller is the seller.
         if (msg.sender != listing.seller) {

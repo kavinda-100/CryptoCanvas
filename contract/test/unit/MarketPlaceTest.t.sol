@@ -244,4 +244,22 @@ contract MarketPlaceTest is Test {
         marketplace.buyNFT{value: price}(zeroListingId);
         vm.stopPrank();
     }
+
+    /**
+     * @dev Test that buying an NFT fails when the listing is not active.
+     * Mints an NFT to user1, approves the marketplace to transfer the NFT,
+     * lists the NFT for sale, buys the NFT as user2, and then attempts to buy the same NFT again, expecting a revert.
+     */
+    function test_try_to_buyNFT_when_it_not_active() external mintAndListNFT(user1, 1) {
+        // buy the listed NFT as user2
+        vm.startPrank(user2);
+        uint256 listingId = 1; // since it's the first listing
+        uint256 price = 1 ether; // 'mintAndListNFT' modifier lists it for 1 ether
+        marketplace.buyNFT{value: price}(listingId);
+
+        // Try to buy again when not active
+        vm.expectRevert(MarketPlace.MarketPlace__NFTNotActive.selector);
+        marketplace.buyNFT{value: price}(listingId);
+        vm.stopPrank();
+    }
 }

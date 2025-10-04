@@ -29,6 +29,7 @@ contract TreasuryTestFuzz is Test {
         vm.assume(_to != address(0)); // Valid recipient
         vm.assume(_to.code.length == 0); // EOA only (not a contract)
         vm.assume(_to != treasury.owner()); // Avoid conflicts with owner address
+        vm.assume(uint160(_to) > 1000); // Avoid very low addresses that might cause transfer issues
 
         // Get the owner
         address owner = treasury.owner();

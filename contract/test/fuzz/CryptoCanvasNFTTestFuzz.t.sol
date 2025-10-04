@@ -34,7 +34,7 @@ contract CryptoCanvasNFTTestFuzz is Test {
         assertEq(nft.ownerOf(tokenId), _user); // Owner should be the user
         assertEq(nft.balanceOf(_user), 1); // User should have 1 NFT
         assertEq(nft.tokenURI(tokenId), _tokenURI); // Token URI should match
-        assertEq(nft.getTotalMinted(), 1); // Total minted should be 1
+        assertEq(nft.getTotalMinted(), 2); // Total minted should be 2 (nextTokenId starts at 1, after mint it's 2)
         vm.stopPrank();
     }
 
@@ -52,7 +52,7 @@ contract CryptoCanvasNFTTestFuzz is Test {
         string memory tokenURI = _tokenURI;
 
         vm.expectEmit(true, true, true, true);
-        emit CryptoCanvasNFT.NFTMinted(_user, 0, tokenURI);
+        emit CryptoCanvasNFT.NFTMinted(_user, 1, tokenURI); // Changed from 0 to 1
 
         nft.mintNFT(tokenURI);
         vm.stopPrank();

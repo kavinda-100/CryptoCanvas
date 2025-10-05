@@ -23,6 +23,7 @@ export default tseslint.config(
       "@typescript-eslint/no-namespace": "off",
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/consistent-type-imports": [
         "warn",
         { prefer: "type-imports", fixStyle: "inline-type-imports" },

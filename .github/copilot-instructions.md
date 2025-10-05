@@ -1,4 +1,21 @@
-# Copilot Instructions
+# Copilot Instructions v1.0
+
+Last Updated: [2025-10-05]
+
+# Table of Contents
+
+1. Project Overview
+2. Technology Used
+3. Project Structure
+4. Features
+5. Development Guidelines
+6. Code Generation Rules
+7. Design System Guidelines
+8. Security Best Practices
+9. Testing Standards
+10. Code Style Examples
+11. Error Handling
+12. Deployment Guidelines
 
 # Project Overview
 
@@ -32,7 +49,7 @@ The project is organized into several key folders and files:
 - `.vscode/settings.json`: Configuration settings for Visual Studio Code specific to this project.
 - `License`: The license under which the project is distributed.
 
-# Development Setup
+# Development Guidelines
 
 To check out the project set up the development environment/dependencies, follow these steps:
 
@@ -75,7 +92,7 @@ To check out the project set up the development environment/dependencies, follow
 - The application is built using modern web technologies (React, Next.js, Tailwind CSS, etc.).
 - The backend is powered by Ethereum smart contracts.
 
-# Code Generation Instructions
+# Code Generation Rules
 
 When generating code, please follow these guidelines:
 
@@ -99,3 +116,119 @@ When generating code, please follow these guidelines:
 - When generating configuration files, ensure that they are properly structured and include necessary settings for the project.
 - When work with `README.md` files, ensure that they provide clear and comprehensive information about the project, setup instructions, and usage guidelines. also add `Icons` and any necessary things like tables, code snippets, diagrams where necessary to make it visually appealing.
 - When generating `Makefile`, ensure that it includes all necessary commands for building, testing, and deploying the project.
+
+# Design System Guidelines
+
+- **Colors**: Use CSS custom properties from globals.css
+- **Typography**: Follow established font hierarchy
+- **Spacing**: Use Tailwind's spacing scale (4, 8, 12, 16, etc.)
+- **Components**: Follow shadcn/ui patterns for consistency
+- **Icons**: Lucide React icons with consistent sizing (h-4 w-4, h-5 w-5, h-6 w-6)
+
+# Security Best Practices
+
+- Always validate user inputs in smart contracts
+- Use OpenZeppelin security patterns
+- Implement proper access controls
+- Test for reentrancy attacks
+- Gas optimization considerations
+
+# Testing Standards
+
+- **Smart Contracts**: 100% line and branch coverage required
+- **Unit Tests**: Test individual functions and edge cases
+- **Integration Tests**: Test contract interactions
+- **Fuzz Testing**: Use Foundry's fuzzing capabilities
+
+# Code Style Examples
+
+## Smart Contract Example:
+
+```solidity
+contract MarketPlace {
+    // Use clear naming conventions
+    mapping(uint256 => Listing) public listings;
+
+    // Emit events for important state changes
+    event NFTListed(uint256 indexed listingId, address indexed seller);
+}
+```
+
+## React Component Example:
+
+```tsx
+import { type BaseError, useReadContracts } from "wagmi";
+import { Button } from "@/components/ui/button";
+import ABI from "@/contracts/abis/abi.json";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+
+function ReadContract() {
+  const { data, error, isPending, refetch } = useReadContracts({
+    contracts: [
+      {
+        abi: ABI,
+        address: "0xYourContractAddress",
+        functionName: "balanceOf",
+        args: ["0x03A71968491d55603FFe1b11A9e23eF013f75bCF"],
+      },
+      {
+        abi: ABI,
+        address: "0xYourContractAddress",
+        functionName: "ownerOf",
+        args: [BigInt(69)],
+      },
+      {
+        abi: ABI,
+        address: "0xYourContractAddress",
+        functionName: "totalSupply",
+      },
+    ],
+  });
+  const [balance, ownerOf, totalSupply] = data || [];
+
+  if (isPending) return <div>Loading...</div>;
+
+  if (error)
+    return (
+      <div>Error: {(error as BaseError).shortMessage || error.message}</div>
+    );
+
+  return (
+    <section className="container mx-auto p-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Read Contract Data</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div>Balance: {balance?.toString()}</div>
+          <div>Owner of Token 69: {ownerOf?.toString()}</div>
+          <div>Total Supply: {totalSupply?.toString()}</div>
+        </CardContent>
+        <CardFooter>
+          <Button onClick={() => refetch()}>Refetch</Button>
+        </CardFooter>
+      </Card>
+    </section>
+  );
+}
+```
+
+# Error Handling
+
+- **Smart Contracts**: Use custom errors for gas efficiency
+- **Frontend**: Implement user-friendly error messages
+- **Wallet Integration**: Handle connection failures gracefully
+- **Network Issues**: Provide clear feedback for network problems
+
+# Deployment Guidelines
+
+- Use deployment scripts in `contracts/script/`
+- Verify contracts on Etherscan
+- Update deployment addresses in frontend config
+- Test on Sepolia before mainnet deployment

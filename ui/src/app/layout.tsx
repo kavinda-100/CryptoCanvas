@@ -35,8 +35,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <WebThreeProvider>
-            <main className="mx-auto min-h-screen max-w-[2000px] px-4 sm:px-6 lg:px-8">
-              <Header />
+            <Header />
+            <main className="mx-auto min-h-screen max-w-[2000px] px-4 pt-20 sm:px-6 lg:px-8">
               {children}
             </main>
           </WebThreeProvider>

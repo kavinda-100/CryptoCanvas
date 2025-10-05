@@ -6,17 +6,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ModeToggle } from "./ModeToggle";
 import { cn } from "@/lib/utils";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
 
 const navItems = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Explore", href: "/explore" },
-  { label: "My Art", href: "/my-art" },
-  { label: "Create", href: "/create" },
 ];
 
 export const Header = () => {
   const pathname = usePathname();
+  const account = useAccount();
   return (
     <header className="flex w-full items-center justify-between gap-3 px-2 py-3">
       {/* logo */}
@@ -39,18 +40,48 @@ export const Header = () => {
         <nav className="hidden gap-6 md:flex">
           {navItems.map((item) => (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={cn(
-                "hover:text-primary text-lg font-bold transition-colors",
+                "text-md hover:text-primary font-medium transition-colors",
                 pathname === item.href ? "text-primary" : "text-secondary",
               )}
             >
               {item.label}
             </Link>
           ))}
+          {/* only show if account is connected */}
+          {account.isConnected && (
+            <>
+              <Link
+                key="/My Art"
+                href="/my-art"
+                className={cn(
+                  "text-md hover:text-primary font-medium transition-colors",
+                  pathname === "/my-art" ? "text-primary" : "text-secondary",
+                )}
+              >
+                My Art
+              </Link>
+              <Link
+                key="/create"
+                href="/create"
+                className={cn(
+                  "text-md hover:text-primary font-medium transition-colors",
+                  pathname === "/create" ? "text-primary" : "text-secondary",
+                )}
+              >
+                Create
+              </Link>
+            </>
+          )}
         </nav>
         {/* connect wallet button */}
+        <ConnectButton
+          showBalance={false}
+          accountStatus={"avatar"}
+          chainStatus={"icon"}
+        />
         {/* mode toggle */}
         <ModeToggle />
         {/* mobile menu */}

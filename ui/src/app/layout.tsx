@@ -1,9 +1,11 @@
 import "@/styles/globals.css";
+import "@rainbow-me/rainbowkit/styles.css";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Header } from "@/components/Header";
+import WebThreeProvider from "@/providers/WebThreeProvider";
 
 export const metadata: Metadata = {
   title: "CryptoCanvas",
@@ -32,10 +34,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="mx-auto min-h-screen max-w-[2000px] px-4 sm:px-6 lg:px-8">
-            <Header />
-            {children}
-          </main>
+          <WebThreeProvider>
+            <main className="mx-auto min-h-screen max-w-[2000px] px-4 sm:px-6 lg:px-8">
+              <Header />
+              {children}
+            </main>
+          </WebThreeProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -19,6 +19,7 @@ import {
   CheckCircle,
   Star,
 } from "lucide-react";
+import { SplashCursor } from "@/components/SplashCursor";
 
 export default function AboutPage() {
   // Animation variants
@@ -46,6 +47,7 @@ export default function AboutPage() {
 
   return (
     <div className="bg-background min-h-screen">
+      <SplashCursor />
       {/* Hero Section */}
       <motion.section
         className="relative overflow-hidden py-24 lg:py-32"

@@ -123,7 +123,7 @@ const MainHeroSection = () => {
         </div>
 
         {/* Right Section - Hero Title */}
-        <div className="order-1 flex h-full w-full flex-col items-center justify-center gap-8 px-4 lg:order-2 lg:px-0">
+        <div className="order-1 flex h-full w-full flex-col items-center justify-center gap-4 px-4 lg:order-2 lg:px-0">
           <div className="flex w-full flex-col gap-6">
             {/* Decorative top bar with animation */}
             <div className="bg-primary/20 relative h-2 w-full overflow-hidden rounded-full">
@@ -144,26 +144,110 @@ const MainHeroSection = () => {
               />
             </h1>
 
+            {/* Subtitle */}
+            <p className="text-muted-foreground text-lg leading-relaxed font-medium lg:text-xl">
+              Join the{" "}
+              <span className="text-primary font-bold">revolution</span> of
+              digital art. Create, collect, and trade unique assets.
+            </p>
+
             {/* Decorative bottom bar */}
             <div className="bg-primary/20 relative h-2 w-full overflow-hidden rounded-full">
               <div className="via-primary absolute inset-0 w-1/3 animate-[shimmer_2s_infinite_reverse] bg-gradient-to-r from-transparent to-transparent" />
             </div>
 
             {/* Additional info cards */}
-            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="border-primary/20 bg-card/50 hover:border-primary/40 rounded-lg border p-6 backdrop-blur-sm transition-all hover:shadow-lg">
-                <h3 className="mb-2 text-lg font-bold">Create & Sell</h3>
-                <p className="text-muted-foreground text-sm">
-                  Mint your artwork as NFTs and reach a global audience of
-                  collectors.
-                </p>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="group border-primary/20 bg-card/50 hover:border-primary/40 hover:bg-card/70 relative overflow-hidden rounded-lg border p-6 backdrop-blur-sm transition-all hover:scale-[1.02] hover:shadow-lg">
+                <div className="from-primary/5 absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="relative">
+                  <div className="bg-primary/10 mb-3 inline-block rounded-lg p-2">
+                    <svg
+                      className="text-primary h-6 w-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="mb-2 text-lg font-bold">Create & Sell</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Mint your artwork as NFTs and reach collectors worldwide.
+                  </p>
+                </div>
               </div>
-              <div className="border-primary/20 bg-card/50 hover:border-primary/40 rounded-lg border p-6 backdrop-blur-sm transition-all hover:shadow-lg">
-                <h3 className="mb-2 text-lg font-bold">Trade & Earn</h3>
-                <p className="text-muted-foreground text-sm">
-                  Buy, sell, and trade NFTs on our secure and transparent
-                  platform.
-                </p>
+              <div className="group border-primary/20 bg-card/50 hover:border-primary/40 hover:bg-card/70 relative overflow-hidden rounded-lg border p-6 backdrop-blur-sm transition-all hover:scale-[1.02] hover:shadow-lg">
+                <div className="from-primary/5 absolute inset-0 bg-gradient-to-br to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="relative">
+                  <div className="bg-primary/10 mb-3 inline-block rounded-lg p-2">
+                    <svg
+                      className="text-primary h-6 w-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="mb-2 text-lg font-bold">Trade & Earn</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    Buy, sell, and trade on our secure blockchain platform.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Feature highlights */}
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+              <div className="bg-primary/10 border-primary/20 flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-sm">
+                <svg
+                  className="text-primary h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-xs font-semibold">Secure</span>
+              </div>
+              <div className="bg-primary/10 border-primary/20 flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-sm">
+                <svg
+                  className="text-primary h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M13 7H7v6h6V7z" />
+                  <path
+                    fillRule="evenodd"
+                    d="M7 2a1 1 0 012 0v1h2V2a1 1 0 112 0v1h2a2 2 0 012 2v2h1a1 1 0 110 2h-1v2h1a1 1 0 110 2h-1v2a2 2 0 01-2 2h-2v1a1 1 0 11-2 0v-1H9v1a1 1 0 11-2 0v-1H5a2 2 0 01-2-2v-2H2a1 1 0 110-2h1V9H2a1 1 0 010-2h1V5a2 2 0 012-2h2V2zM5 5h10v10H5V5z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                <span className="text-xs font-semibold">Fast</span>
+              </div>
+              <div className="bg-primary/10 border-primary/20 flex items-center gap-2 rounded-full border px-4 py-2 backdrop-blur-sm">
+                <svg
+                  className="text-primary h-4 w-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                </svg>
+                <span className="text-xs font-semibold">Transparent</span>
               </div>
             </div>
           </div>

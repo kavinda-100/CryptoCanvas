@@ -1,10 +1,22 @@
-import { Button } from "@/components/ui/button";
+import SplashCursor from "@/components/SplashCursor";
+import BannerSection from "@/sections/BannerSection";
+import FaqSection from "@/sections/FAQSection";
+import MainHeroSection from "@/sections/MainHeroSection";
+import SecondHeroSection from "@/sections/SecondHeroSection";
 
 export default function HomePage() {
   return (
-    <section>
-      <h1 className="mb-4 text-4xl font-bold">Welcome to CryptoCanvas</h1>
-      <Button>Get Started</Button>
+    <section className="flex w-full flex-col gap-10 lg:gap-5">
+      {/* SplashCursor component */}
+      <SplashCursor />
+      {/*  Hero section */}
+      <MainHeroSection />
+
+      <SecondHeroSection />
+      {/*  FAQ section */}
+      <FaqSection />
+      {/*    Banner section */}
+      <BannerSection />
     </section>
   );
 }

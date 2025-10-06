@@ -6,6 +6,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Header } from "@/components/Header";
 import WebThreeProvider from "@/providers/WebThreeProvider";
+import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "CryptoCanvas",
@@ -38,6 +39,7 @@ export default function RootLayout({
             <Header />
             <main className="mx-auto min-h-screen max-w-[2000px] px-4 pt-20 sm:px-6 lg:px-8">
               {children}
+              <Footer />
             </main>
           </WebThreeProvider>
         </ThemeProvider>

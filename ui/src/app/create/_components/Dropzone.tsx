@@ -53,7 +53,7 @@ function Dropzone() {
       // set the image in the store
       setImage(`https://ipfs.io/ipfs/${upload.cid}`);
       setFallbackImage(
-        `https://${process.env.PINATA_GATEWAY}/ipfs/${upload.cid}`,
+        `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${upload.cid}`,
       );
       // show success toast
       toast.success(`File - ${file.name} uploaded successfully!`);

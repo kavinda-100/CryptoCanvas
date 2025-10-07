@@ -15,8 +15,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Plus, X } from "lucide-react";
+import { Loader2Icon, Plus, X } from "lucide-react";
 import { toast } from "sonner";
+import { useWriteContract } from "wagmi";
+import { uploadJSONMetadata } from "../_actions";
 
 export const CreateNFT = () => {
   // Get the NFT details from the store
@@ -31,10 +33,15 @@ export const CreateNFT = () => {
     setExternalLink,
     getFullNFTDetails,
   } = useCreateNFTStoreDetails();
+  const [metadataCID, setMetadataCID] = React.useState<string | undefined>(
+    undefined,
+  );
+  const [isMinting, setIsMinting] = React.useState(false);
+  const { data: hash, writeContract } = useWriteContract();
 
   // ----------------------------------------- Mint -----------------------------------------
 
-  const mintNFT = () => {
+  const mintNFT = async () => {
     const nftDetails = getFullNFTDetails();
     // check if all required fields are filled
     if (!nftDetails.name || !nftDetails.description || !nftDetails.image) {
@@ -44,6 +51,44 @@ export const CreateNFT = () => {
       return;
     }
     console.log("Minting NFT with details:", nftDetails);
+    setIsMinting(true); // set minting state to true
+
+    // Upload metadata to IPFS
+    try {
+      const res = await uploadJSONMetadata({
+        name: nftDetails.name,
+        description: nftDetails.description,
+        image: nftDetails.image,
+        fallbackImage: nftDetails.fallbackImage,
+        attributes: nftDetails.attributes,
+        external_link: nftDetails.external_link,
+      });
+      if (res.success) {
+        setMetadataCID(res.cid);
+        console.log(
+          "Metadata uploaded with CID:",
+          `https://ipfs.io/ipfs/${res.cid}`,
+          `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${res.cid}`,
+        );
+        toast.success("Metadata uploaded successfully!");
+      } else {
+        toast.error(res.error ?? "Error uploading metadata. Please try again.");
+        return;
+      }
+    } catch (error) {
+      console.error("Error uploading metadata:", error);
+      toast.error("Error uploading metadata. Please try again.");
+      return;
+    }
+    // mint the NFT by calling the smart contract
+    // writeContract({
+    //   address: "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
+    //   abi,
+    //   functionName: "mint",
+    //   args: [BigInt(tokenId)],
+    // });
+
+    setIsMinting(false); // reset minting state
   };
   // ----------------------------------------------------------------------------------------
 
@@ -173,7 +218,15 @@ export const CreateNFT = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={mintNFT}>Mint NFT</Button>
+          <Button onClick={mintNFT} disabled={isMinting}>
+            {isMinting ? (
+              <div className="flex gap-2">
+                <Loader2Icon className="size-5 animate-spin" /> Minting...
+              </div>
+            ) : (
+              "Mint NFT"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </div>

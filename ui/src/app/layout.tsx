@@ -1,12 +1,13 @@
 import "@/styles/globals.css";
 import "@rainbow-me/rainbowkit/styles.css";
-import { ThemeProvider } from "@/providers/ThemeProvider";
 
 import { type Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Header } from "@/components/Header";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import WebThreeProvider from "@/providers/WebThreeProvider";
+import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "CryptoCanvas",
@@ -39,6 +40,11 @@ export default function RootLayout({
             <Header />
             <main className="mx-auto min-h-screen max-w-[2000px] px-4 pt-20 sm:px-6 lg:px-8">
               {children}
+              <Toaster
+                position="top-center"
+                richColors={true}
+                closeButton={true}
+              />
               <Footer />
             </main>
           </WebThreeProvider>

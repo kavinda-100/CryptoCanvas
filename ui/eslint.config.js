@@ -27,6 +27,7 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-member-access": "off",
       "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "@next/next/no-img-element": "off",
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/consistent-type-imports": [
         "warn",

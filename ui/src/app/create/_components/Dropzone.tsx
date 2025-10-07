@@ -7,9 +7,17 @@ import { Loader2, Loader2Icon, XIcon } from "lucide-react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { toast } from "sonner";
 import pinata from "@/pinata";
-import { deleteFileAction } from "../actions";
+import { deleteFileAction } from "../_actions";
+import { useCreateNFTStoreDetails } from "@/store/createNFTStore";
+
+// https://ipfs.io/ipfs/bafybeifnlmbmldh4pkmscwdlmfwooatlcowwqdwg5xslry4psxtcusxoj4
+
+// https://yourgateway.mypinata.cloud/ipfs/bafybeifnlmbmldh4pkmscwdlmfwooatlcowwqdwg5xslry4psxtcusxoj4
 
 function Dropzone() {
+  // Get the store actions
+  const { setImage, setFallbackImage } = useCreateNFTStoreDetails();
+  // file upload constants
   const MAX_FILE_SIZE = 10;
   const MAX_FILES = 1;
   // State to hold the uploaded file and its metadata
@@ -42,6 +50,11 @@ function Dropzone() {
         cid: upload.cid,
         id: upload.id,
       });
+      // set the image in the store
+      setImage(`https://ipfs.io/ipfs/${upload.cid}`);
+      setFallbackImage(
+        `https://${process.env.PINATA_GATEWAY}/ipfs/${upload.cid}`,
+      );
       // show success toast
       toast.success(`File - ${file.name} uploaded successfully!`);
     } catch (error) {
@@ -74,6 +87,9 @@ function Dropzone() {
         setIsDeleting(false);
         setFile(null);
         toast.success("File deleted successfully");
+        // clear the image from the store
+        setImage("");
+        setFallbackImage("");
       } else {
         setIsDeleting(false);
         toast.error(res.error ?? "Error deleting file");

@@ -15,7 +15,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, Plus, X } from "lucide-react";
+import {
+  Loader2Icon,
+  Plus,
+  X,
+  Sparkles,
+  Palette,
+  FileImage,
+  Tag,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { uploadJSONMetadata } from "../_actions";
@@ -187,47 +195,85 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
 
   return (
     <div className="w-full">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <CardTitle>Upload your artwork</CardTitle>
-          <CardDescription>
-            Use the form below to upload your artwork and create your NFT.
+      <Card className="w-full max-w-2xl border-2 border-emerald-200/50 bg-gradient-to-br from-white via-emerald-50/30 to-green-50/30 shadow-xl dark:border-gray-700 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <CardHeader className="rounded-t-lg bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-600 text-white">
+          <CardTitle className="flex items-center gap-3 text-xl">
+            <div className="rounded-lg bg-white/20 p-2">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            Upload Your Artwork
+          </CardTitle>
+          <CardDescription className="text-emerald-100">
+            Create your unique NFT by uploading your artwork and adding
+            metadata.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col space-y-4">
-          {/* form goes here {name, description, attributes, external_link} */}
-          {/* name */}
-          <div className="space-y-2">
-            <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </div>
-          {/* description */}
-          <div className="space-y-2">
-            <Label>Description</Label>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-          {/* external link */}
-          <div className="space-y-2">
-            <Label>External Link</Label>
-            <Input
-              value={external_link}
-              onChange={(e) => setExternalLink(e.target.value)}
-            />
+        <CardContent className="space-y-6 p-8">
+          {/* Basic Information Section */}
+          <div className="space-y-6">
+            <div className="mb-4 flex items-center gap-2">
+              <Palette className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Basic Information
+              </h3>
+            </div>
+
+            {/* Name */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                NFT Name *
+              </Label>
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter a catchy name for your NFT"
+                className="border-gray-300 bg-white/80 transition-colors focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800/80 dark:focus:border-emerald-400"
+              />
+            </div>
+
+            {/* Description */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Description *
+              </Label>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Describe your artwork, its story, and what makes it unique..."
+                rows={4}
+                className="resize-none border-gray-300 bg-white/80 transition-colors focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800/80 dark:focus:border-emerald-400"
+              />
+            </div>
+
+            {/* External Link */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                External Link
+              </Label>
+              <Input
+                value={external_link}
+                onChange={(e) => setExternalLink(e.target.value)}
+                placeholder="https://your-website.com (optional)"
+                className="border-gray-300 bg-white/80 transition-colors focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800/80 dark:focus:border-emerald-400"
+              />
+            </div>
           </div>
 
-          {/* Attributes */}
-          <div className="space-y-2">
+          {/* Attributes Section */}
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label>Attributes</Label>
+              <div className="flex items-center gap-2">
+                <Tag className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <Label className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Attributes & Properties
+                </Label>
+              </div>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={addAttribute}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border-none bg-gradient-to-r from-emerald-500 to-green-500 text-white transition-all duration-200 hover:from-emerald-600 hover:to-green-600"
               >
                 <Plus className="h-4 w-4" />
                 Add Attribute
@@ -235,33 +281,38 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
             </div>
 
             {attributes.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No attributes added yet. Click &quot;Add Attribute&quot; to get
-                started.
-              </p>
+              <div className="rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 py-8 text-center dark:border-gray-600 dark:bg-gray-800/50">
+                <Tag className="mx-auto mb-3 h-12 w-12 text-gray-400" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No attributes added yet. Add some properties to make your NFT
+                  more unique!
+                </p>
+              </div>
             ) : (
               <div className="space-y-3">
                 {attributes.map((attribute, index: number) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 rounded-lg border p-3"
+                    className="flex items-center gap-3 rounded-lg border-2 border-gray-200 bg-white/60 p-4 transition-colors hover:border-blue-300 dark:border-gray-700 dark:bg-gray-800/60 dark:hover:border-blue-600"
                   >
                     <div className="flex-1">
                       <Input
-                        placeholder="Trait Type (e.g., Color, Rarity)"
+                        placeholder="Trait Type (e.g., Color, Rarity, Style)"
                         value={attribute.trait_type}
                         onChange={(e) =>
                           updateAttribute(index, "trait_type", e.target.value)
                         }
+                        className="border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
                       />
                     </div>
                     <div className="flex-1">
                       <Input
-                        placeholder="Value (e.g., Blue, Rare)"
+                        placeholder="Value (e.g., Blue, Rare, Abstract)"
                         value={attribute.value}
                         onChange={(e) =>
                           updateAttribute(index, "value", e.target.value)
                         }
+                        className="border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
                       />
                     </div>
                     <Button
@@ -269,6 +320,7 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
                       variant="destructive"
                       size="sm"
                       onClick={() => removeAttribute(index)}
+                      className="shrink-0 bg-red-500 transition-colors hover:bg-red-600"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -278,25 +330,42 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
             )}
           </div>
 
-          {/* Dropzone */}
-          <div className="space-y-2">
-            <Label>Upload File</Label>
-            <p className="text-sm text-gray-500">
-              Supported file types: JPG, PNG, SVG. Max size: 10MB.
-            </p>
-            <Dropzone />
+          {/* Upload Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <FileImage className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <Label className="text-lg font-semibold text-gray-900 dark:text-white">
+                Upload Artwork *
+              </Label>
+            </div>
+            <div className="rounded-lg border-2 border-dashed border-green-300 bg-gradient-to-br from-green-50 to-blue-50 p-4 dark:border-gray-600 dark:from-gray-800 dark:to-gray-700">
+              <p className="mb-3 text-sm text-gray-600 dark:text-gray-300">
+                Supported formats: JPG, PNG, SVG • Maximum size: 10MB
+              </p>
+              <Dropzone />
+            </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button onClick={mintNFT} disabled={isMinting}>
-            {isMinting ? (
-              <div className="flex gap-2">
-                <Loader2Icon className="size-5 animate-spin" /> Minting...
-              </div>
-            ) : (
-              "Mint NFT"
-            )}
-          </Button>
+        <CardFooter className="rounded-b-lg bg-gray-50 p-6 dark:bg-gray-800/50">
+          <div className="flex w-full justify-end">
+            <Button
+              onClick={mintNFT}
+              disabled={isMinting}
+              className="rounded-lg bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-600 px-8 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:from-emerald-700 hover:via-green-700 hover:to-emerald-700 hover:shadow-xl disabled:opacity-50"
+            >
+              {isMinting ? (
+                <div className="flex items-center gap-3">
+                  <Loader2Icon className="h-5 w-5 animate-spin" />
+                  <span>Minting Your NFT...</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Sparkles className="h-5 w-5" />
+                  <span>Mint NFT</span>
+                </div>
+              )}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>

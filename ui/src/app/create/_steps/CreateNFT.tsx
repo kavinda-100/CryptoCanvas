@@ -17,8 +17,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Loader2Icon, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { uploadJSONMetadata } from "../_actions";
+import { CRYPTO_CANVAS_NFT_ADDRESS } from "@/abi";
+import cryptoCanvasNFTsABI from "@/abi/json/CryptoCanvasNFT.json";
+import { decodeEventLog } from "viem";
 
 export const CreateNFT = () => {
   // Get the NFT details from the store
@@ -31,16 +34,66 @@ export const CreateNFT = () => {
     setDescription,
     setAttributes,
     setExternalLink,
+    setNFTId,
     getFullNFTDetails,
   } = useCreateNFTStoreDetails();
-  const [metadataCID, setMetadataCID] = React.useState<string | undefined>(
-    undefined,
-  );
+  const [tokenURIForMint, setTokenURIForMint] = React.useState<
+    string | undefined
+  >(undefined);
   const [isMinting, setIsMinting] = React.useState(false);
   const { data: hash, writeContract } = useWriteContract();
 
-  // ----------------------------------------- Mint -----------------------------------------
+  // Wait for transaction receipt to get the NFT ID
+  const { data: receipt } = useWaitForTransactionReceipt({
+    hash,
+  });
 
+  // ----------------------------------------- Mint -----------------------------------------
+  // Effect to handle successful minting and extract NFT ID
+  React.useEffect(() => {
+    if (receipt && receipt.logs.length > 0) {
+      try {
+        // Look for NFTMinted event which contains the token ID directly
+        for (const log of receipt.logs) {
+          try {
+            const decodedLog = decodeEventLog({
+              abi: cryptoCanvasNFTsABI.abi,
+              data: log.data,
+              topics: log.topics,
+            });
+
+            // Check if this is the NFTMinted event
+            if (decodedLog.eventName === "NFTMinted") {
+              const args = decodedLog.args as unknown as {
+                creator: string;
+                tokenId: bigint;
+                tokenURI: string;
+              };
+
+              const nftId = Number(args.tokenId);
+              setNFTId(nftId);
+              toast.dismiss(); // Dismiss the loading toast
+              toast.success(`NFT minted successfully! Token ID: ${nftId}`);
+              console.log("NFT minted with Token ID:", nftId);
+              console.log("Creator:", args.creator);
+              console.log("Token URI:", args.tokenURI);
+              setIsMinting(false);
+              break;
+            }
+          } catch {
+            // Skip logs that can't be decoded with our ABI
+            continue;
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing transaction receipt:", error);
+        toast.error("NFT minted but failed to get Token ID");
+        setIsMinting(false);
+      }
+    }
+  }, [receipt, setNFTId]);
+
+  // Function to mint the NFT
   const mintNFT = async () => {
     const nftDetails = getFullNFTDetails();
     // check if all required fields are filled
@@ -64,12 +117,12 @@ export const CreateNFT = () => {
         external_link: nftDetails.external_link,
       });
       if (res.success) {
-        setMetadataCID(res.cid);
-        console.log(
-          "Metadata uploaded with CID:",
-          `https://ipfs.io/ipfs/${res.cid}`,
-          `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${res.cid}`,
-        );
+        setTokenURIForMint(`https://ipfs.io/ipfs/${res.cid}`);
+        // console.log(
+        //   "Metadata uploaded with CID:",
+        //   `https://ipfs.io/ipfs/${res.cid}`,
+        //   `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${res.cid}`,
+        // );
         toast.success("Metadata uploaded successfully!");
       } else {
         toast.error(res.error ?? "Error uploading metadata. Please try again.");
@@ -81,14 +134,26 @@ export const CreateNFT = () => {
       return;
     }
     // mint the NFT by calling the smart contract
-    // writeContract({
-    //   address: "0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2",
-    //   abi,
-    //   functionName: "mint",
-    //   args: [BigInt(tokenId)],
-    // });
-
-    setIsMinting(false); // reset minting state
+    writeContract(
+      {
+        address: CRYPTO_CANVAS_NFT_ADDRESS as `0x${string}`,
+        abi: cryptoCanvasNFTsABI.abi,
+        functionName: "mintNFT",
+        args: [tokenURIForMint],
+      },
+      {
+        onSuccess() {
+          toast.loading(
+            "Minting transaction sent! Waiting for confirmation...",
+          );
+        },
+        onError(error) {
+          console.error("Error minting NFT:", error);
+          toast.error("Error minting NFT. Please try again.");
+          setIsMinting(false); // Reset loading state on error
+        },
+      },
+    );
   };
   // ----------------------------------------------------------------------------------------
 

@@ -248,12 +248,12 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
             {/* External Link */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                External Link
+                External Link (Optional)
               </Label>
               <Input
                 value={external_link}
                 onChange={(e) => setExternalLink(e.target.value)}
-                placeholder="https://your-website.com (optional)"
+                placeholder="https://your-website.com or social media"
                 className="border-gray-300 bg-white/80 transition-colors focus:border-emerald-500 dark:border-gray-600 dark:bg-gray-800/80 dark:focus:border-emerald-400"
               />
             </div>

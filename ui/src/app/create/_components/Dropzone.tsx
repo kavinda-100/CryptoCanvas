@@ -3,9 +3,11 @@
 import React, { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, Loader2Icon, XIcon } from "lucide-react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { toast } from "sonner";
+import pinata from "@/pinata";
+import { deleteFileAction } from "../actions";
 
 function Dropzone() {
   const MAX_FILE_SIZE = 10;
@@ -15,7 +17,73 @@ function Dropzone() {
     file: File;
     isUploaded: boolean;
     cid: string;
+    id: string;
   } | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
+
+  const uploadFile = async (file: File) => {
+    try {
+      // set the file as uploading
+      setFile({
+        file,
+        isUploaded: true,
+        cid: "",
+        id: "",
+      });
+      // upload the file to pinata
+      const urlRequest = await fetch("/api/pinata/url"); // Fetches the temporary upload URL
+      const urlResponse: { url: string } = await urlRequest.json(); // Parse response
+      const upload = await pinata.upload.public.file(file).url(urlResponse.url); // Upload the file with the signed URL
+
+      // set the file as uploaded
+      setFile({
+        file,
+        isUploaded: false,
+        cid: upload.cid,
+        id: upload.id,
+      });
+      // show success toast
+      toast.success(`File - ${file.name} uploaded successfully!`);
+    } catch (error) {
+      toast.error(`Error uploading file - ${file.name}`);
+      setFile({
+        file,
+        isUploaded: false,
+        cid: "",
+        id: "",
+      });
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  // Handle deleted files
+  const deleteFile = async (
+    fileId: string,
+    e: React.FormEvent<HTMLFormElement>,
+  ) => {
+    e.preventDefault();
+    try {
+      // if no file, return
+      if (!file) return;
+      // set loading state
+      setIsDeleting(true);
+      //  delete the file from pinata
+      const res = await deleteFileAction(fileId);
+      if (res.success) {
+        // remove the file from state
+        setIsDeleting(false);
+        setFile(null);
+        toast.success("File deleted successfully");
+      } else {
+        setIsDeleting(false);
+        toast.error(res.error ?? "Error deleting file");
+      }
+    } catch (error) {
+      console.error("Internal server error when deleting file:", error);
+      setIsDeleting(false);
+      toast.error("Internal server error");
+    }
+  };
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // set the first accepted file
@@ -24,7 +92,12 @@ function Dropzone() {
         file: acceptedFiles[0]!,
         isUploaded: false,
         cid: "",
+        id: "",
       });
+    }
+    // upload the first accepted file
+    if (acceptedFiles.length > 0) {
+      void uploadFile(acceptedFiles[0]!);
     }
   }, []);
 
@@ -61,7 +134,7 @@ function Dropzone() {
   });
 
   return (
-    <>
+    <section className="flex w-full flex-col gap-y-5">
       {/* Dropzone */}
       <div
         {...getRootProps({
@@ -82,7 +155,7 @@ function Dropzone() {
 
       {/* Display uploaded file image */}
       {file?.file && (
-        <div className="group relative mt-5 w-full">
+        <div className="group relative w-full">
           <div className="relative">
             <img
               src={URL.createObjectURL(file.file)}
@@ -102,8 +175,17 @@ function Dropzone() {
             )}
           </div>
 
-          <form className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
-            <Button variant="destructive">Remove</Button>
+          <form
+            onSubmit={(e) => deleteFile(file.id, e)}
+            className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            <Button variant="destructive" disabled={isDeleting}>
+              {isDeleting ? (
+                <Loader2Icon className="size-5 animate-spin" />
+              ) : (
+                <XIcon className="size-5" />
+              )}
+            </Button>
           </form>
 
           <p className="mt-2 truncate text-sm text-gray-500">
@@ -111,7 +193,7 @@ function Dropzone() {
           </p>
         </div>
       )}
-    </>
+    </section>
   );
 }
 

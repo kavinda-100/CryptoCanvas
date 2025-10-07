@@ -16,10 +16,19 @@ type CreateNFTStoreDetails = {
   setFallbackImage: (image: string) => void;
   setAttributes: (attributes: { trait_type: string; value: string }[]) => void;
   setExternalLink: (link: string) => void;
+
+  getFullNFTDetails: () => {
+    name: string;
+    description: string;
+    image: string;
+    fallbackImage: string;
+    attributes: { trait_type: string; value: string }[];
+    external_link: string;
+  };
 };
 
 export const useCreateNFTStoreDetails = create<CreateNFTStoreDetails>(
-  (set) => ({
+  (set, get) => ({
     NFTId: 0,
     name: "",
     description: "",
@@ -36,5 +45,24 @@ export const useCreateNFTStoreDetails = create<CreateNFTStoreDetails>(
     setAttributes: (attributes: { trait_type: string; value: string }[]) =>
       set({ attributes }),
     setExternalLink: (link: string) => set({ external_link: link }),
+
+    getFullNFTDetails: () => {
+      const {
+        name,
+        description,
+        image,
+        fallbackImage,
+        attributes,
+        external_link,
+      } = get();
+      return {
+        name,
+        description,
+        image,
+        fallbackImage,
+        attributes,
+        external_link,
+      };
+    },
   }),
 );

@@ -96,7 +96,7 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
         setIsMinting(false);
       }
     }
-  }, [receipt, setNFTId]);
+  }, [receipt, setNFTId, setSteps]);
 
   // Function to mint the NFT
   const mintNFT = async () => {

@@ -15,7 +15,7 @@ const CreateNFTPage = () => {
         {/* step 1 */}
         {steps === 1 && <CreateNFT setSteps={setSteps} />}
         {/* step 2 */}
-        {steps === 2 && <ApproveNFT />}
+        {steps === 2 && <ApproveNFT setSteps={setSteps} />}
         {/* step 3 */}
         {steps === 3 && <ListNFTs />}
 

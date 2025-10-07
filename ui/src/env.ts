@@ -6,6 +6,8 @@ const envSchema = z.object({
     .default("development"),
   NEXT_PUBLIC_ALCHEMY_RPC_URL: z.string().url(),
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: z.string().min(1),
+  PINATA_JWT: z.string().min(1),
+  PINATA_GATEWAY: z.string().min(1),
 });
 
 const env = envSchema.safeParse(process.env);

@@ -23,7 +23,11 @@ import { CRYPTO_CANVAS_NFT_ADDRESS } from "@/abi";
 import cryptoCanvasNFTsABI from "@/abi/json/CryptoCanvasNFT.json";
 import { decodeEventLog } from "viem";
 
-export const CreateNFT = () => {
+type CreateNFTProps = {
+  setSteps: React.Dispatch<React.SetStateAction<1 | 2 | 3>>;
+};
+
+export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
   // Get the NFT details from the store
   const {
     name,
@@ -78,6 +82,7 @@ export const CreateNFT = () => {
               console.log("Creator:", args.creator);
               console.log("Token URI:", args.tokenURI);
               setIsMinting(false);
+              setSteps(2); // Move to the next step
               break;
             }
           } catch {

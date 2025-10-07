@@ -13,7 +13,7 @@ const CreateNFTPage = () => {
       <div className="flex w-full max-w-2xl flex-col gap-6">
         <div>Steps {steps} / 3</div>
         {/* step 1 */}
-        {steps === 1 && <CreateNFT />}
+        {steps === 1 && <CreateNFT setSteps={setSteps} />}
         {/* step 2 */}
         {steps === 2 && <ApproveNFT />}
         {/* step 3 */}

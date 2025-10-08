@@ -49,9 +49,6 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
     setNFTId,
     getFullNFTDetails,
   } = useCreateNFTStoreDetails();
-  const [tokenURIForMint, setTokenURIForMint] = React.useState<
-    string | undefined
-  >(undefined);
   const [isMinting, setIsMinting] = React.useState(false);
   const { data: hash, writeContract } = useWriteContract();
 
@@ -130,43 +127,46 @@ export const CreateNFT = ({ setSteps }: CreateNFTProps) => {
         external_link: nftDetails.external_link,
       });
       if (res.success) {
-        setTokenURIForMint(`https://ipfs.io/ipfs/${res.cid}`);
+        const ipfsURL = `https://ipfs.io/ipfs/${res.cid}`;
         // console.log(
         //   "Metadata uploaded with CID:",
-        //   `https://ipfs.io/ipfs/${res.cid}`,
+        //   ipfsURL,
         //   `https://${process.env.NEXT_PUBLIC_PINATA_GATEWAY}/ipfs/${res.cid}`,
         // );
         toast.success("Metadata uploaded successfully!");
+
+        // mint the NFT by calling the smart contract with the IPFS URL
+        writeContract(
+          {
+            address: CRYPTO_CANVAS_NFT_ADDRESS as `0x${string}`,
+            abi: cryptoCanvasNFTsABI.abi,
+            functionName: "mintNFT",
+            args: [ipfsURL], // Use the IPFS URL directly, not the state variable
+          },
+          {
+            onSuccess() {
+              toast.loading(
+                "Minting transaction sent! Waiting for confirmation...",
+              );
+            },
+            onError(error) {
+              console.error("Error minting NFT:", error);
+              toast.error("Error minting NFT. Please try again.");
+              setIsMinting(false); // Reset loading state on error
+            },
+          },
+        );
       } else {
         toast.error(res.error ?? "Error uploading metadata. Please try again.");
+        setIsMinting(false);
         return;
       }
     } catch (error) {
       console.error("Error uploading metadata:", error);
       toast.error("Error uploading metadata. Please try again.");
+      setIsMinting(false);
       return;
     }
-    // mint the NFT by calling the smart contract
-    writeContract(
-      {
-        address: CRYPTO_CANVAS_NFT_ADDRESS as `0x${string}`,
-        abi: cryptoCanvasNFTsABI.abi,
-        functionName: "mintNFT",
-        args: [tokenURIForMint],
-      },
-      {
-        onSuccess() {
-          toast.loading(
-            "Minting transaction sent! Waiting for confirmation...",
-          );
-        },
-        onError(error) {
-          console.error("Error minting NFT:", error);
-          toast.error("Error minting NFT. Please try again.");
-          setIsMinting(false); // Reset loading state on error
-        },
-      },
-    );
   };
   // ----------------------------------------------------------------------------------------
 

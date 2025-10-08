@@ -81,15 +81,15 @@ export const NFTCard = ({
       </CardHeader>
 
       {/* Content Section */}
-      <CardContent className="p-4">
+      <CardContent className="flex h-48 flex-col justify-between p-4">
         <div className="space-y-3">
           {/* NFT Title */}
-          <div>
-            <h3 className="line-clamp-2 text-lg leading-tight font-bold text-gray-900 dark:text-white">
+          <div className="min-h-[4rem]">
+            <h3 className="line-clamp-1 text-lg font-bold text-gray-900 dark:text-white">
               {metadata?.name ?? `NFT #${tokenId}`}
             </h3>
             {metadata?.description && (
-              <p className="mt-1 line-clamp-2 text-sm text-gray-600 dark:text-gray-300">
+              <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
                 {metadata.description}
               </p>
             )}
@@ -107,16 +107,16 @@ export const NFTCard = ({
               ID #{listingId}
             </Badge>
           </div>
+        </div>
 
-          {/* Date and Token Info */}
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-              <Calendar className="h-4 w-4" />
-              <span title={dateInfo.formatted}>{dateInfo.relative}</span>
-            </div>
-            <div className="text-xs text-gray-400 dark:text-gray-500">
-              Token #{tokenId}
-            </div>
+        {/* Date and Token Info - Fixed at bottom */}
+        <div className="mt-auto space-y-2">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+            <Calendar className="h-4 w-4" />
+            <span title={dateInfo.formatted}>{dateInfo.relative}</span>
+          </div>
+          <div className="text-xs text-gray-400 dark:text-gray-500">
+            Token #{tokenId}
           </div>
         </div>
       </CardContent>

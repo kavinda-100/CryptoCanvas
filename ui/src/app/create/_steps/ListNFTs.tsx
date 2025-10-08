@@ -29,8 +29,10 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 export const ListNFTs = () => {
+  const router = useRouter();
   // Get the NFT details from the store
   const { NFTId } = useCreateNFTStoreDetails();
   const [isListing, setIsListing] = React.useState(false);
@@ -66,7 +68,11 @@ export const ListNFTs = () => {
       {
         onSuccess() {
           toast.success("NFT listed successfully!");
-          // Move to the my-art page or another appropriate action later
+          // wait for a few seconds
+          setTimeout(() => {
+            // Move to the my-art page
+            router.push("/my-art");
+          }, 3000);
         },
         onError(error) {
           console.error("Error listing NFT:", error);

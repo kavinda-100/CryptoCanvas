@@ -6,9 +6,25 @@ import { CreateNFT } from "./_steps/CreateNFT";
 import { ApproveNFT } from "./_steps/ApproveNFT";
 import { ListNFTs } from "./_steps/ListNFTs";
 import { CheckCircle, Upload, Shield, Store } from "lucide-react";
+import { useAccount } from "wagmi";
+import { useRouter } from "next/navigation";
 
 const CreateNFTPage = () => {
+  const account = useAccount();
+  const router = useRouter();
   const [steps, setSteps] = React.useState<1 | 2 | 3>(1);
+
+  // Redirect to home if not connected
+  React.useEffect(() => {
+    if (
+      (!account.isConnected && account.status !== "connecting") ||
+      account.isReconnecting
+    ) {
+      router.push("/");
+    }
+  }, [account, router]);
+
+  // Step data for rendering
 
   const stepData = [
     {

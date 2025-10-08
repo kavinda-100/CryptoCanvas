@@ -1,8 +1,8 @@
 "use client";
 
+import { NFTCard } from "@/components/NFTCard";
 import { useGetSellerActiveNFTs } from "@/hooks/useGetSellerActiveNFTs";
 import React from "react";
-import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 
 const MyArtPage = () => {
@@ -38,12 +38,9 @@ const MyArtPage = () => {
   }
 
   return (
-    <section className="w-full">
+    <section className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {activeNFTs.map((nft) => (
-        <div key={nft.listingId.toString()} className="mb-4 border p-4">
-          <h2 className="text-lg font-bold">{nft.tokenURI}</h2>
-          <p>Price: {formatEther(nft.price)} ETH</p>
-        </div>
+        <NFTCard key={nft.listingId} {...nft} />
       ))}
     </section>
   );

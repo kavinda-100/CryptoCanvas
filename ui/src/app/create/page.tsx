@@ -16,10 +16,7 @@ const CreateNFTPage = () => {
 
   // Redirect to home if not connected
   React.useEffect(() => {
-    if (
-      (!account.isConnected && account.status !== "connecting") ||
-      account.isReconnecting
-    ) {
+    if (!account.isConnected) {
       router.push("/");
     }
   }, [account, router]);

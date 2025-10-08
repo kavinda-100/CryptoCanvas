@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { useAccount } from "wagmi";
 
-export const MyArtPage = () => {
+const MyArtPage = () => {
   const account = useAccount();
   const router = useRouter();
 
@@ -20,3 +20,5 @@ export const MyArtPage = () => {
 
   return <div>MyArtPage</div>;
 };
+
+export default MyArtPage;

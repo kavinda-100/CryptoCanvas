@@ -1,0 +1,343 @@
+{
+  "nft_metadata_collection": {
+    "collection_info": {
+      "name": "CryptoCanvas Genesis Collection",
+      "description": "The first collection of NFTs on the CryptoCanvas platform, featuring custom PC builds and crypto-inspired artwork.",
+      "total_supply": 7,
+      "created_at": "2025-10-08",
+      "categories": ["PC Builds", "Crypto Art"]
+    },
+    "nfts": [
+      {
+        "id": 1,
+        "category": "PC Build",
+        "name": "Arctic Beast Gaming Rig",
+        "description": "A pristine white and blue themed gaming powerhouse designed for ultimate performance. This custom build features top-tier AMD components in a stunning HIte Y70 case, delivering both aesthetics and raw computing power for the most demanding applications.",
+        "image": "https://ipfs.io/ipfs/QmPcBuildArctic1",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmPcBuildArctic1",
+        "attributes": [
+          {
+            "trait_type": "Color Theme",
+            "value": "Arctic White & Ice Blue"
+          },
+          {
+            "trait_type": "CPU",
+            "value": "AMD Ryzen 9 7950X"
+          },
+          {
+            "trait_type": "GPU",
+            "value": "AMD Radeon RX 7900 XTX"
+          },
+          {
+            "trait_type": "RAM",
+            "value": "64GB DDR5-6000"
+          },
+          {
+            "trait_type": "Storage",
+            "value": "2TB NVMe SSD + 4TB HDD"
+          },
+          {
+            "trait_type": "Case",
+            "value": "HIte Y70 PC Case"
+          },
+          {
+            "trait_type": "Cooling",
+            "value": "Custom Loop Liquid Cooling"
+          },
+          {
+            "trait_type": "Power Supply",
+            "value": "1000W 80+ Platinum"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Legendary"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/arctic-beast-gaming-rig"
+      },
+      {
+        "id": 2,
+        "category": "PC Build",
+        "name": "Sapphire Storm Workstation",
+        "description": "A professional workstation build featuring a mesmerizing blue and white color scheme. Engineered for content creators, developers, and professionals who demand reliability and performance in a visually stunning package.",
+        "image": "https://ipfs.io/ipfs/QmPcBuildSapphire2",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmPcBuildSapphire2",
+        "attributes": [
+          {
+            "trait_type": "Color Theme",
+            "value": "Sapphire Blue & Pearl White"
+          },
+          {
+            "trait_type": "CPU",
+            "value": "AMD Ryzen 9 7900X"
+          },
+          {
+            "trait_type": "GPU",
+            "value": "NVIDIA RTX 4080 Super"
+          },
+          {
+            "trait_type": "RAM",
+            "value": "32GB DDR5-5600"
+          },
+          {
+            "trait_type": "Storage",
+            "value": "1TB NVMe SSD + 2TB NVMe SSD"
+          },
+          {
+            "trait_type": "Case",
+            "value": "HIte Y70 PC Case"
+          },
+          {
+            "trait_type": "Cooling",
+            "value": "AIO 360mm Liquid Cooler"
+          },
+          {
+            "trait_type": "Power Supply",
+            "value": "850W 80+ Gold"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Epic"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/sapphire-storm-workstation"
+      },
+      {
+        "id": 3,
+        "category": "PC Build",
+        "name": "Frost Fury Creator Build",
+        "description": "A compact yet powerful creator-focused build with a clean white and electric blue aesthetic. Perfect for streaming, video editing, and content creation with AMD's finest components housed in the premium HIte Y70 case.",
+        "image": "https://ipfs.io/ipfs/QmPcBuildFrost3",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmPcBuildFrost3",
+        "attributes": [
+          {
+            "trait_type": "Color Theme",
+            "value": "Frost White & Electric Blue"
+          },
+          {
+            "trait_type": "CPU",
+            "value": "AMD Ryzen 7 7800X3D"
+          },
+          {
+            "trait_type": "GPU",
+            "value": "AMD Radeon RX 7800 XT"
+          },
+          {
+            "trait_type": "RAM",
+            "value": "32GB DDR5-6400"
+          },
+          {
+            "trait_type": "Storage",
+            "value": "2TB NVMe SSD Gen4"
+          },
+          {
+            "trait_type": "Case",
+            "value": "HIte Y70 PC Case"
+          },
+          {
+            "trait_type": "Cooling",
+            "value": "AIO 280mm Liquid Cooler"
+          },
+          {
+            "trait_type": "Power Supply",
+            "value": "750W 80+ Gold"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Rare"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/frost-fury-creator-build"
+      },
+      {
+        "id": 4,
+        "category": "Crypto Art",
+        "name": "CryptoCanvas Genesis Banner",
+        "description": "The iconic genesis banner of the CryptoCanvas platform, featuring vibrant crypto-inspired artwork with bold geometric patterns and digital aesthetics. This piece represents the birth of a new era in decentralized art trading.",
+        "image": "./imgs/banner.png",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmBannerGenesis4",
+        "attributes": [
+          {
+            "trait_type": "Art Style",
+            "value": "Digital Geometric"
+          },
+          {
+            "trait_type": "Color Palette",
+            "value": "Vibrant Neon"
+          },
+          {
+            "trait_type": "Theme",
+            "value": "Crypto Genesis"
+          },
+          {
+            "trait_type": "Composition",
+            "value": "Abstract Landscape"
+          },
+          {
+            "trait_type": "Elements",
+            "value": "Geometric Shapes"
+          },
+          {
+            "trait_type": "Background",
+            "value": "Gradient Mesh"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Genesis"
+          },
+          {
+            "trait_type": "Origin",
+            "value": "Platform Launch"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/genesis-banner"
+      },
+      {
+        "id": 5,
+        "category": "Crypto Art",
+        "name": "Digital Horizon Hero",
+        "description": "A futuristic crypto-punk inspired hero artwork featuring sleek digital landscapes and cyberpunk aesthetics. This piece captures the essence of the digital frontier and the limitless possibilities of blockchain technology.",
+        "image": "./imgs/hero-one.png",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmHeroOne5",
+        "attributes": [
+          {
+            "trait_type": "Art Style",
+            "value": "Cyberpunk"
+          },
+          {
+            "trait_type": "Color Palette",
+            "value": "Cool Synthwave"
+          },
+          {
+            "trait_type": "Theme",
+            "value": "Digital Frontier"
+          },
+          {
+            "trait_type": "Composition",
+            "value": "Futuristic Landscape"
+          },
+          {
+            "trait_type": "Elements",
+            "value": "Neon Highlights"
+          },
+          {
+            "trait_type": "Background",
+            "value": "Cityscape Silhouette"
+          },
+          {
+            "trait_type": "Mood",
+            "value": "Mysterious"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Ultra Rare"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/digital-horizon-hero"
+      },
+      {
+        "id": 6,
+        "category": "Crypto Art",
+        "name": "Nexus Portal Vision",
+        "description": "An ethereal crypto-art piece depicting interdimensional portals and digital nexus points. This artwork embodies the connection between different blockchain networks and the infinite possibilities of decentralized creativity.",
+        "image": "./imgs/hero-two.png",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmHeroTwo6",
+        "attributes": [
+          {
+            "trait_type": "Art Style",
+            "value": "Ethereal Digital"
+          },
+          {
+            "trait_type": "Color Palette",
+            "value": "Prismatic Glow"
+          },
+          {
+            "trait_type": "Theme",
+            "value": "Interdimensional"
+          },
+          {
+            "trait_type": "Composition",
+            "value": "Portal Gateway"
+          },
+          {
+            "trait_type": "Elements",
+            "value": "Energy Streams"
+          },
+          {
+            "trait_type": "Background",
+            "value": "Cosmic Void"
+          },
+          {
+            "trait_type": "Effects",
+            "value": "Particle Systems"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Mythic"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/nexus-portal-vision"
+      },
+      {
+        "id": 7,
+        "category": "Crypto Art",
+        "name": "Knowledge Nexus Archive",
+        "description": "A crypto-punk styled information architecture visualization featuring data streams, knowledge networks, and FAQ-inspired design elements. This piece represents the democratization of information in the Web3 era.",
+        "image": "./imgs/faq.png",
+        "fallbackImage": "https://gateway.pinata.cloud/ipfs/QmFAQNexus7",
+        "attributes": [
+          {
+            "trait_type": "Art Style",
+            "value": "Info-Architecture"
+          },
+          {
+            "trait_type": "Color Palette",
+            "value": "Matrix Green"
+          },
+          {
+            "trait_type": "Theme",
+            "value": "Knowledge Network"
+          },
+          {
+            "trait_type": "Composition",
+            "value": "Data Visualization"
+          },
+          {
+            "trait_type": "Elements",
+            "value": "Information Nodes"
+          },
+          {
+            "trait_type": "Background",
+            "value": "Digital Grid"
+          },
+          {
+            "trait_type": "Pattern",
+            "value": "Algorithmic Flow"
+          },
+          {
+            "trait_type": "Rarity",
+            "value": "Legendary"
+          }
+        ],
+        "external_link": "https://cryptocanvas.com/nft/knowledge-nexus-archive"
+      }
+    ]
+  },
+  "minting_instructions": {
+    "note": "This seeder file contains metadata for 7 unique NFTs in the CryptoCanvas Genesis Collection",
+    "usage": {
+      "pc_builds": "NFTs 1-3 represent custom PC builds with detailed hardware specifications",
+      "crypto_art": "NFTs 4-7 are based on the actual images in the imgs/ directory with crypto-punk styling"
+    },
+    "ipfs_setup": {
+      "step_1": "Upload actual PC build images to IPFS/Pinata",
+      "step_2": "Replace placeholder IPFS hashes with real CIDs",
+      "step_3": "Update fallbackImage URLs with your Pinata gateway",
+      "step_4": "For crypto art pieces, upload the imgs/ files to IPFS and update URLs"
+    },
+    "attributes_explanation": {
+      "pc_builds": "Include hardware specs, color themes, and performance metrics",
+      "crypto_art": "Focus on artistic style, composition, color palette, and thematic elements"
+    }
+  }
+}

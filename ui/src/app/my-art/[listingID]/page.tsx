@@ -20,12 +20,13 @@ import {
   Calendar,
   User,
   Zap,
-  ShoppingCart,
   Info,
   Globe,
   Image as ImageIcon,
 } from "lucide-react";
 import { formatListedDate } from "@/lib/date-utils";
+import { BuyNFT } from "./_components/BuyNFT";
+import { CancelNFTListing } from "./_components/CancelNFTListing";
 
 export default function ListedNFTFullDetailsPage() {
   const params = useParams<{ listingID: string }>();
@@ -312,19 +313,34 @@ export default function ListedNFTFullDetailsPage() {
                   </div>
                 </div>
 
-                {/* Buy Button */}
-                {!isSold && !isOwner && account.isConnected && (
-                  <Button className="w-full bg-emerald-600 py-3 text-lg font-semibold text-white hover:bg-emerald-700">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    Buy Now
-                  </Button>
-                )}
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                  {!isSold && account.isConnected && (
+                    <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-900/10">
+                      <BuyNFT />
+                    </div>
+                  )}
 
-                {!account.isConnected && (
-                  <Button className="w-full" variant="outline">
-                    Connect Wallet to Purchase
-                  </Button>
-                )}
+                  {!isSold && isOwner && account.isConnected && (
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10">
+                      <CancelNFTListing />
+                    </div>
+                  )}
+
+                  {!account.isConnected && (
+                    <Button className="w-full" variant="outline">
+                      Connect Wallet to Purchase
+                    </Button>
+                  )}
+
+                  {isSold && (
+                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center dark:border-gray-700 dark:bg-gray-800">
+                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        This NFT has been sold
+                      </p>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
 

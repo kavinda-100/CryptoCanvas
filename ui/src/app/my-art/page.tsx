@@ -2,7 +2,7 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ActiveNFTs } from "./_tabs/ActiveNFTs";
 import { InActiveNFTs } from "./_tabs/InActiveNFTs";
-import { Palette, TrendingUp, CheckCircle } from "lucide-react";
+import { Palette, TrendingUp, CheckCircle, ShoppingBag } from "lucide-react";
 import { UserPurchasedNFTs } from "./_tabs/UserPurchasedNFTs";
 
 const MyArtPage = () => {
@@ -28,7 +28,7 @@ const MyArtPage = () => {
         {/* Enhanced Tabs */}
         <Tabs defaultValue="activeNFTs" className="w-full">
           <div className="flex justify-center">
-            <TabsList className="grid w-full max-w-md grid-cols-2 border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+            <TabsList className="grid w-full max-w-2xl grid-cols-3 border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
               <TabsTrigger
                 value="activeNFTs"
                 className="flex items-center gap-2 transition-all duration-200 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
@@ -47,7 +47,7 @@ const MyArtPage = () => {
                 value="userPurchasedNFTs"
                 className="flex items-center gap-2 transition-all duration-200 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
               >
-                <CheckCircle className="h-4 w-4" />
+                <ShoppingBag className="h-4 w-4" />
                 Purchased NFTs
               </TabsTrigger>
             </TabsList>

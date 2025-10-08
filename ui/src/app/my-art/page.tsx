@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ActiveNFTs } from "./_tabs/ActiveNFTs";
 import { InActiveNFTs } from "./_tabs/InActiveNFTs";
 import { Palette, TrendingUp, CheckCircle } from "lucide-react";
+import { UserPurchasedNFTs } from "./_tabs/UserPurchasedNFTs";
 
 const MyArtPage = () => {
   return (
@@ -42,6 +43,13 @@ const MyArtPage = () => {
                 <CheckCircle className="h-4 w-4" />
                 Sold NFTs
               </TabsTrigger>
+              <TabsTrigger
+                value="userPurchasedNFTs"
+                className="flex items-center gap-2 transition-all duration-200 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
+              >
+                <CheckCircle className="h-4 w-4" />
+                Purchased NFTs
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -57,6 +65,12 @@ const MyArtPage = () => {
               className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
             >
               <InActiveNFTs />
+            </TabsContent>
+            <TabsContent
+              value="userPurchasedNFTs"
+              className="rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+            >
+              <UserPurchasedNFTs />
             </TabsContent>
           </div>
         </Tabs>

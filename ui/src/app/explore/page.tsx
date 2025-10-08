@@ -28,7 +28,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatEther } from "viem";
-import { cn } from "@/lib/utils";
 
 type SortOption =
   | "newest"

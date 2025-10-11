@@ -1,23 +1,56 @@
 "use client";
 
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Loader2 } from "lucide-react";
-import React from "react";
+import { useWriteContract } from "wagmi";
+import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
+import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-export const BuyNFT = () => {
+export const BuyNFT = ({
+  listingId,
+  price,
+}: {
+  listingId: bigint;
+  price: bigint;
+}) => {
   const [isLoading, setIsLoading] = React.useState(false);
+  const [purchaseError, setPurchaseError] = React.useState<string | null>(null);
+  const { data: hash, writeContract } = useWriteContract();
+  const router = useRouter();
 
   const handleBuyNFT = async () => {
     setIsLoading(true);
-    try {
-      // TODO: Implement buy NFT logic here
-      console.log("Buying NFT...");
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate transaction
-    } catch (error) {
-      console.error("Error buying NFT:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    writeContract(
+      {
+        address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
+        abi: cryptoCanvasMarketplaceABI.abi,
+        functionName: "buyNFT",
+        args: [listingId],
+        value: price,
+      },
+      {
+        onSuccess() {
+          console.log("NFT purchase successful:", hash);
+          setIsLoading(false);
+          setPurchaseError(null);
+          toast.success("NFT purchased successfully! 💰");
+          // wait for a few seconds
+          setTimeout(() => {
+            router.push("/my-art");
+          }, 3000);
+        },
+        onError(error) {
+          console.error("Error during NFT purchase:", error);
+          setIsLoading(false);
+          setPurchaseError(
+            error.message ?? "An Error occurred during purchase.",
+          );
+        },
+      },
+    );
   };
 
   return (
@@ -49,6 +82,13 @@ export const BuyNFT = () => {
       <p className="text-center text-xs text-emerald-600 dark:text-emerald-400">
         Complete your purchase securely on the blockchain
       </p>
+      {purchaseError && (
+        <div className="mt-2 rounded border border-red-400 bg-red-50 px-4 py-2">
+          <p className="text-center text-sm text-red-600 dark:text-red-400">
+            {purchaseError}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

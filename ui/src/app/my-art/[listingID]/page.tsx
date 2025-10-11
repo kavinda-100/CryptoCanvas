@@ -317,7 +317,10 @@ export default function ListedNFTFullDetailsPage() {
                 <div className="space-y-3">
                   {!isSold && account.isConnected && (
                     <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-900/10">
-                      <BuyNFT />
+                      <BuyNFT
+                        listingId={singleListing.listingId}
+                        price={singleListing.price}
+                      />
                     </div>
                   )}
 

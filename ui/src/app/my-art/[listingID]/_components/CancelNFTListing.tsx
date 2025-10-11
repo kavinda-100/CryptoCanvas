@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { X, Loader2, AlertTriangle } from "lucide-react";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
 import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
 import { useRouter } from "next/navigation";
@@ -15,50 +15,73 @@ export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
   const [showConfirm, setShowConfirm] = React.useState(false);
   const [cancelError, setCancelError] = React.useState<string | null>(null);
   const { data: hash, writeContract } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const handleCancelListing = async () => {
     setIsLoading(true);
-    writeContract(
-      {
-        address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
-        abi: cryptoCanvasMarketplaceABI.abi,
-        functionName: "cancelListing",
-        args: [listingId],
-      },
-      {
-        onSuccess() {
-          console.log("NFT listing canceled successfully:", hash);
-          setIsLoading(false);
-          setCancelError(null);
-          toast.success("NFT listing canceled successfully! 🗑️");
+    setCancelError(null);
 
-          // Invalidate all relevant queries
+    writeContract({
+      address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
+      abi: cryptoCanvasMarketplaceABI.abi,
+      functionName: "cancelListing",
+      args: [listingId],
+    });
+  };
+
+  React.useEffect(() => {
+    if (isConfirmed) {
+      // Transaction confirmed on blockchain
+      console.log("NFT listing canceled successfully:", hash);
+      toast.success("NFT listing canceled successfully! 🗑️");
+      setIsLoading(false);
+
+      // Enhanced query invalidation with multiple attempts
+      const refreshData = async () => {
+        // Invalidate all readContract queries (covers all our hooks)
+        await queryClient.invalidateQueries({
+          queryKey: ["readContract"],
+        });
+
+        // Force refetch all active queries
+        await queryClient.refetchQueries({
+          type: "active",
+        });
+
+        // Also specifically invalidate by contract address
+        if (CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS) {
+          await queryClient.invalidateQueries({
+            predicate: (query) => {
+              return query.queryKey.includes(
+                CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS,
+              );
+            },
+          });
+        }
+
+        // Try again after 2 seconds for good measure
+        setTimeout(() => {
           void queryClient.invalidateQueries({
             queryKey: ["readContract"],
           });
+        }, 2000);
+      };
 
-          // Also specifically invalidate wagmi queries
-          void queryClient.refetchQueries({
-            type: "active",
-          });
+      void refreshData();
 
-          // wait for a few seconds to allow queries to refresh
-          setTimeout(() => {
-            router.push("/my-art");
-          }, 2000);
-        },
-        onError(error) {
-          console.error("Error during NFT listing cancellation:", error);
-          setIsLoading(false);
-          setCancelError(
-            error.message ?? "An Error occurred during cancellation.",
-          );
-        },
-      },
-    );
-  };
+      // Wait for blockchain indexing before navigation
+      setTimeout(() => {
+        router.push("/my-art");
+      }, 5000);
+    }
+  }, [isConfirmed, hash, queryClient, router]);
 
   if (showConfirm) {
     return (
@@ -76,14 +99,14 @@ export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
         <div className="flex gap-2">
           <Button
             onClick={handleCancelListing}
-            disabled={isLoading}
+            disabled={isLoading || isConfirming}
             variant="destructive"
             className="flex-1"
           >
-            {isLoading ? (
+            {isLoading || isConfirming ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Canceling...
+                {isLoading && !isConfirming ? "Submitting..." : "Confirming..."}
               </>
             ) : (
               <>
@@ -96,7 +119,7 @@ export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
             onClick={() => setShowConfirm(false)}
             variant="outline"
             className="flex-1"
-            disabled={isLoading}
+            disabled={isLoading || isConfirming}
           >
             Keep Listed
           </Button>

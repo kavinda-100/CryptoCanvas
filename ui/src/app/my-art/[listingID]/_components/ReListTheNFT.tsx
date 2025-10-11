@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Loader2, AlertCircle } from "lucide-react";
-import { useWriteContract } from "wagmi";
+import { useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { parseEther } from "viem";
 import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
 import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
@@ -22,6 +22,77 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  // Wait for transaction confirmation
+  const {
+    isSuccess: isConfirmed,
+    error,
+    isError,
+  } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  // Handle transaction errors
+  React.useEffect(() => {
+    if (isError && error) {
+      console.error("Error during NFT Re-listing:", error);
+      setIsLoading(false);
+      setReListError(
+        error instanceof Error
+          ? error.message
+          : "An Error occurred during Re-listing.",
+      );
+      toast.error("Failed to submit re-listing transaction.");
+    }
+  }, [isError, error]);
+
+  // Handle transaction confirmation
+  React.useEffect(() => {
+    if (isConfirmed && hash) {
+      console.log("NFT Re-listing confirmed:", hash);
+      setIsLoading(false);
+      setReListError(null);
+      toast.success("NFT Re-listed successfully! 💰");
+
+      // Invalidate all relevant queries after confirmation
+      const refreshData = async () => {
+        // Invalidate all readContract queries (covers all our hooks)
+        await queryClient.invalidateQueries({
+          queryKey: ["readContract"],
+        });
+
+        // Force refetch all active queries
+        await queryClient.refetchQueries({
+          type: "active",
+        });
+
+        // Also specifically invalidate by contract address if we have it
+        if (CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS) {
+          await queryClient.invalidateQueries({
+            predicate: (query) => {
+              return query.queryKey.includes(
+                CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS,
+              );
+            },
+          });
+        }
+
+        // Try again after 2 seconds for good measure
+        setTimeout(() => {
+          void queryClient.invalidateQueries({
+            queryKey: ["readContract"],
+          });
+        }, 2000);
+      };
+
+      void refreshData();
+
+      // Wait a bit longer for data to be indexed
+      setTimeout(() => {
+        router.push("/my-art");
+      }, 5000); // Increased to 5 seconds
+    }
+  }, [isConfirmed, hash, queryClient, router]);
+
   const handleReListNFT = async () => {
     // Validate price input
     if (!newPrice || parseFloat(newPrice) <= 0) {
@@ -30,44 +101,25 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
     }
 
     setIsLoading(true);
-    writeContract(
-      {
+    setReListError(null);
+
+    try {
+      writeContract({
         address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
         abi: cryptoCanvasMarketplaceABI.abi,
         functionName: "relistPurchasedNFT",
         args: [listingId, parseEther(newPrice)],
-      },
-      {
-        onSuccess() {
-          console.log("NFT Re-listing successfully:", hash);
-          setIsLoading(false);
-          setReListError(null);
-          toast.success("NFT Re-listed successfully! 💰");
-
-          // Invalidate all relevant queries
-          void queryClient.invalidateQueries({
-            queryKey: ["readContract"],
-          });
-
-          // Also specifically invalidate wagmi queries
-          void queryClient.refetchQueries({
-            type: "active",
-          });
-
-          // wait for a few seconds to allow queries to refresh
-          setTimeout(() => {
-            router.push("/my-art");
-          }, 2000);
-        },
-        onError(error) {
-          console.error("Error during NFT Re-listing:", error);
-          setIsLoading(false);
-          setReListError(
-            error.message ?? "An Error occurred during Re-listing.",
-          );
-        },
-      },
-    );
+      });
+    } catch (error) {
+      console.error("Error during NFT Re-listing:", error);
+      setIsLoading(false);
+      setReListError(
+        error instanceof Error
+          ? error.message
+          : "An Error occurred during Re-listing.",
+      );
+      toast.error("Failed to submit re-listing transaction.");
+    }
   };
 
   if (showConfirm) {
@@ -99,13 +151,18 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
         <div className="flex gap-2">
           <Button
             onClick={handleReListNFT}
-            disabled={isLoading}
+            disabled={isLoading || !!hash}
             className="flex-1 bg-blue-600 text-white hover:bg-blue-700"
           >
-            {isLoading ? (
+            {isLoading && !hash ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
+                Submitting...
+              </>
+            ) : hash && !isConfirmed ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Confirming...
               </>
             ) : (
               <>
@@ -118,7 +175,7 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
             onClick={() => setShowConfirm(false)}
             variant="outline"
             className="flex-1"
-            disabled={isLoading}
+            disabled={isLoading || !!hash}
           >
             Cancel
           </Button>

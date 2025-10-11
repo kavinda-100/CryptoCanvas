@@ -44,7 +44,12 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
         setReListError(
           "Transaction nonce error. Please refresh the page and try again, or reset your wallet.",
         );
-        toast.error("Nonce error detected. Please refresh and try again.");
+        toast.error("Nonce error detected. Please refresh and try again.", {
+          action: {
+            label: "Refresh Now",
+            onClick: () => window.location.reload(),
+          },
+        });
       } else if (
         errorMessage.includes("rejected") ||
         errorMessage.includes("denied")
@@ -220,15 +225,32 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
             {relistError}
           </p>
           {relistError.includes("nonce") && (
-            <div className="mt-2 flex justify-center">
-              <Button
-                onClick={() => window.location.reload()}
-                variant="outline"
-                size="sm"
-                className="text-xs"
-              >
-                Refresh Page
-              </Button>
+            <div className="mt-3 space-y-2">
+              <p className="text-center text-xs text-red-500">
+                Wallet nonce is out of sync with blockchain.
+              </p>
+              <div className="flex justify-center gap-2">
+                <Button
+                  onClick={() => window.location.reload()}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  🔄 Refresh Page
+                </Button>
+                <Button
+                  onClick={() => {
+                    toast.info(
+                      "Open MetaMask → Settings → Advanced → Reset Account",
+                    );
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  ⚙️ Reset Guide
+                </Button>
+              </div>
             </div>
           )}
         </div>

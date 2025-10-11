@@ -11,6 +11,7 @@ export function useGetSellerActiveNFTs(sellerAddress: `0x${string}`) {
     isPending,
     isError,
     error,
+    refetch,
   } = useReadContract({
     address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
     abi: cryptoCanvasMarketplaceABI.abi,
@@ -23,5 +24,6 @@ export function useGetSellerActiveNFTs(sellerAddress: `0x${string}`) {
     isActiveNFTsPending: isPending,
     isActiveNFTsError: isError,
     ActiveNFTsError: error,
+    refetchActiveNFTs: refetch,
   };
 }

@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, Loader2, AlertCircle } from "lucide-react";
-import { useReadContract, useWriteContract } from "wagmi";
+import { useWriteContract } from "wagmi";
 import { parseEther } from "viem";
 import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
 import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
@@ -19,7 +19,6 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
   const [relistError, setReListError] = React.useState<string | null>(null);
   const [newPrice, setNewPrice] = React.useState<string>("");
   const { data: hash, writeContract } = useWriteContract();
-  const { queryKey } = useReadContract();
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -44,11 +43,21 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
           setIsLoading(false);
           setReListError(null);
           toast.success("NFT Re-listed successfully! 💰");
-          void queryClient.refetchQueries({ queryKey: [queryKey] });
-          // wait for a few seconds
+
+          // Invalidate all relevant queries
+          void queryClient.invalidateQueries({
+            queryKey: ["readContract"],
+          });
+
+          // Also specifically invalidate wagmi queries
+          void queryClient.refetchQueries({
+            type: "active",
+          });
+
+          // wait for a few seconds to allow queries to refresh
           setTimeout(() => {
             router.push("/my-art");
-          }, 3000);
+          }, 2000);
         },
         onError(error) {
           console.error("Error during NFT Re-listing:", error);

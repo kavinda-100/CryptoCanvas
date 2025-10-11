@@ -8,6 +8,7 @@ import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
 import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -15,6 +16,7 @@ export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
   const [cancelError, setCancelError] = React.useState<string | null>(null);
   const { data: hash, writeContract } = useWriteContract();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleCancelListing = async () => {
     setIsLoading(true);
@@ -31,10 +33,21 @@ export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
           setIsLoading(false);
           setCancelError(null);
           toast.success("NFT listing canceled successfully! 🗑️");
-          // wait for a few seconds
+
+          // Invalidate all relevant queries
+          void queryClient.invalidateQueries({
+            queryKey: ["readContract"],
+          });
+
+          // Also specifically invalidate wagmi queries
+          void queryClient.refetchQueries({
+            type: "active",
+          });
+
+          // wait for a few seconds to allow queries to refresh
           setTimeout(() => {
             router.push("/my-art");
-          }, 3000);
+          }, 2000);
         },
         onError(error) {
           console.error("Error during NFT listing cancellation:", error);

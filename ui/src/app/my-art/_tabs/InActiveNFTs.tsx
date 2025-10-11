@@ -5,7 +5,13 @@ import { NFTCard } from "@/components/NFTCard";
 import { useAccount } from "wagmi";
 import { useGetSellerInActiveNFTs } from "@/hooks/useGetSellerInActiveNFTs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Wallet, ShoppingBag, CheckCircle } from "lucide-react";
+import {
+  Loader2,
+  Wallet,
+  ShoppingBag,
+  CheckCircle,
+  RefreshCw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -17,6 +23,7 @@ export const InActiveNFTs = () => {
     isInActiveNFTsPending,
     isInActiveNFTsError,
     InActiveNFTsError,
+    refetchInActiveNFTs,
   } = useGetSellerInActiveNFTs(account.address!);
   console.log("InActive NFTs:", InActiveNFTs);
 
@@ -126,9 +133,20 @@ export const InActiveNFTs = () => {
             currently inactive
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400">
-          <CheckCircle className="h-4 w-4" />
-          <span className="font-medium">Inactive Listings</span>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void refetchInActiveNFTs()}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Refresh
+          </Button>
+          <div className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400">
+            <CheckCircle className="h-4 w-4" />
+            <span className="font-medium">Inactive Listings</span>
+          </div>
         </div>
       </div>
 

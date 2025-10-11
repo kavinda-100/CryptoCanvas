@@ -36,12 +36,29 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
     if (isError && error) {
       console.error("Error during NFT Re-listing:", error);
       setIsLoading(false);
-      setReListError(
-        error instanceof Error
-          ? error.message
-          : "An Error occurred during Re-listing.",
-      );
-      toast.error("Failed to submit re-listing transaction.");
+
+      // Check for nonce-related errors
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes("nonce") || errorMessage.includes("Nonce")) {
+        setReListError(
+          "Transaction nonce error. Please refresh the page and try again, or reset your wallet.",
+        );
+        toast.error("Nonce error detected. Please refresh and try again.");
+      } else if (
+        errorMessage.includes("rejected") ||
+        errorMessage.includes("denied")
+      ) {
+        setReListError("Transaction was rejected by user.");
+        toast.error("Transaction rejected.");
+      } else {
+        setReListError(
+          error instanceof Error
+            ? error.message
+            : "An Error occurred during Re-listing.",
+        );
+        toast.error("Failed to submit re-listing transaction.");
+      }
     }
   }, [isError, error]);
 
@@ -202,6 +219,18 @@ export const ReListTheNFT = ({ listingId }: { listingId: bigint }) => {
           <p className="text-center text-sm text-red-600 dark:text-red-400">
             {relistError}
           </p>
+          {relistError.includes("nonce") && (
+            <div className="mt-2 flex justify-center">
+              <Button
+                onClick={() => window.location.reload()}
+                variant="outline"
+                size="sm"
+                className="text-xs"
+              >
+                Refresh Page
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

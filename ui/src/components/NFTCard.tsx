@@ -65,7 +65,7 @@ export const NFTCard = ({
                   variant={active ? "success" : "secondary"}
                   className="shadow-md"
                 >
-                  {active ? "Active" : "Sold"}
+                  {active ? "Active" : "Inactive"}
                 </Badge>
               </div>
             </>

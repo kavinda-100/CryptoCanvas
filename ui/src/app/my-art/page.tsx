@@ -20,8 +20,8 @@ const MyArtPage = () => {
             </h1>
           </div>
           <p className="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
-            Manage your NFT portfolio, track your active listings, and view your
-            sales history
+            Manage your NFT portfolio, track your active listings, view your
+            inactive listings, and see your purchased NFTs
           </p>
         </div>
 
@@ -41,7 +41,7 @@ const MyArtPage = () => {
                 className="flex items-center gap-2 transition-all duration-200 data-[state=active]:bg-emerald-500 data-[state=active]:text-white"
               >
                 <CheckCircle className="h-4 w-4" />
-                Sold NFTs
+                Inactive NFTs
               </TabsTrigger>
               <TabsTrigger
                 value="userPurchasedNFTs"

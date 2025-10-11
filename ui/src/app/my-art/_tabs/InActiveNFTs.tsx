@@ -33,7 +33,7 @@ export const InActiveNFTs = () => {
               Connect Your Wallet
             </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Please connect your wallet to view your sold NFTs.
+              Please connect your wallet to view your inactive NFTs.
             </p>
           </div>
         </CardContent>
@@ -49,10 +49,10 @@ export const InActiveNFTs = () => {
           <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              Loading Sold NFTs
+              Loading Inactive NFTs
             </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              Fetching your sold NFTs from the blockchain...
+              Fetching your inactive NFTs from the blockchain...
             </p>
           </div>
         </CardContent>
@@ -74,7 +74,7 @@ export const InActiveNFTs = () => {
             </h3>
             <p className="mt-1 text-sm text-red-600 dark:text-red-300">
               {InActiveNFTsError?.message ??
-                "Failed to load your sold NFTs. Please try again."}
+                "Failed to load your inactive NFTs. Please try again."}
             </p>
           </div>
         </CardContent>
@@ -92,11 +92,11 @@ export const InActiveNFTs = () => {
           </div>
           <div>
             <h3 className="font-semibold text-gray-900 dark:text-white">
-              No Sold NFTs
+              No Inactive NFTs
             </h3>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              You haven&apos;t sold any NFTs yet. Keep creating and listing your
-              art!
+              You don&apos;t have any inactive NFTs. Your active listings will
+              appear here when they expire or are removed.
             </p>
           </div>
           <Link href="/create">
@@ -119,16 +119,16 @@ export const InActiveNFTs = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Sold NFTs
+            Inactive NFTs
           </h2>
           <p className="mt-1 text-gray-600 dark:text-gray-300">
             {InActiveNFTs.length} NFT{InActiveNFTs.length === 1 ? "" : "s"}{" "}
-            successfully sold
+            currently inactive
           </p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
+        <div className="flex items-center gap-2 text-sm text-orange-600 dark:text-orange-400">
           <CheckCircle className="h-4 w-4" />
-          <span className="font-medium">Completed Sales</span>
+          <span className="font-medium">Inactive Listings</span>
         </div>
       </div>
 

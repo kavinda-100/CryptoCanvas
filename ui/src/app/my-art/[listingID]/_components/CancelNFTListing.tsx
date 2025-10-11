@@ -1,25 +1,50 @@
 "use client";
 
+import React from "react";
 import { Button } from "@/components/ui/button";
 import { X, Loader2, AlertTriangle } from "lucide-react";
-import React from "react";
+import { useWriteContract } from "wagmi";
+import { CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS } from "@/abi";
+import cryptoCanvasMarketplaceABI from "@/abi/json/MarketPlace.json";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-export const CancelNFTListing = () => {
+export const CancelNFTListing = ({ listingId }: { listingId: bigint }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);
+  const [cancelError, setCancelError] = React.useState<string | null>(null);
+  const { data: hash, writeContract } = useWriteContract();
+  const router = useRouter();
 
   const handleCancelListing = async () => {
     setIsLoading(true);
-    try {
-      // TODO: Implement cancel listing logic here
-      console.log("Canceling NFT listing...");
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate transaction
-      setShowConfirm(false);
-    } catch (error) {
-      console.error("Error canceling listing:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    writeContract(
+      {
+        address: CRYPTO_CANVAS_NFT_MARKETPLACE_ADDRESS as `0x${string}`,
+        abi: cryptoCanvasMarketplaceABI.abi,
+        functionName: "cancelListing",
+        args: [listingId],
+      },
+      {
+        onSuccess() {
+          console.log("NFT listing canceled successfully:", hash);
+          setIsLoading(false);
+          setCancelError(null);
+          toast.success("NFT listing canceled successfully! 🗑️");
+          // wait for a few seconds
+          setTimeout(() => {
+            router.push("/my-art");
+          }, 3000);
+        },
+        onError(error) {
+          console.error("Error during NFT listing cancellation:", error);
+          setIsLoading(false);
+          setCancelError(
+            error.message ?? "An Error occurred during cancellation.",
+          );
+        },
+      },
+    );
   };
 
   if (showConfirm) {
@@ -31,9 +56,9 @@ export const CancelNFTListing = () => {
             Confirm Cancellation
           </span>
         </div>
-        <p className="mb-3 text-sm text-gray-600 dark:text-gray-400">
-          Are you sure you want to cancel this listing? This action cannot be
-          undone.
+        <p className="mb-3 text-sm text-pretty text-gray-600 dark:text-gray-400">
+          Are you sure you want to cancel this listing? Even though you will,
+          you can relist this NFT later 😊.
         </p>
         <div className="flex gap-2">
           <Button
@@ -79,8 +104,15 @@ export const CancelNFTListing = () => {
         Cancel Listing
       </Button>
       <p className="text-center text-xs text-red-600 dark:text-red-400">
-        Remove your NFT from the marketplace
+        Remove your NFT from the marketplace listing.
       </p>
+      {cancelError && (
+        <div className="mt-2 rounded border border-red-400 bg-red-50 px-4 py-2">
+          <p className="text-center text-sm text-red-600 dark:text-red-400">
+            {cancelError}
+          </p>
+        </div>
+      )}
     </div>
   );
 };

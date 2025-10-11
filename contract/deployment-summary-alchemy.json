@@ -1,0 +1,10 @@
+{
+  "block_number": 9387276,
+  "chain_id": 11155111,
+  "cryptoCanvasNFT_address": "0x0a2F221A8F531eeF97822AC1232F520F55C8DfB6",
+  "cryptoCanvasNFT_marketPlace_address": "0xcE7B306e1C80F81A65EdA9886E837c2Dedf2bF11",
+  "cryptoCanvasNFT_treasury_address": "0xfeBF366200eD4664acb14a4466a012e72e43c22c",
+  "deployment_timestamp": 1760162064,
+  "network": "Sepolia Testnet",
+  "status": "deployed_successfully"
+}

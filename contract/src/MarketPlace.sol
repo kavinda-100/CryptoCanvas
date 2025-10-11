@@ -215,11 +215,11 @@ contract MarketPlace is ReentrancyGuard, Ownable {
         // transfer NFT to marketplace from the seller.
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
 
-        // add to new listing
+        // modify the existing listing
         if (_isRelist) {
             listings[_originalListingId] = Listing({
                 listingId: _originalListingId,
-                seller: msg.sender,
+                seller: msg.sender, // new seller is the purchaser
                 buyer: address(0),
                 nftContract: _nftContract,
                 tokenId: _tokenId,
@@ -231,6 +231,7 @@ contract MarketPlace is ReentrancyGuard, Ownable {
             // emit the listing event with original listing ID
             emit NFTListed(_originalListingId, msg.sender, _nftContract, _tokenId, _price);
         } else {
+            // add to new listing
             listings[nextListingId] = Listing({
                 listingId: nextListingId,
                 seller: msg.sender,

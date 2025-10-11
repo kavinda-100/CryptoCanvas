@@ -27,6 +27,7 @@ import {
 import { formatListedDate } from "@/lib/date-utils";
 import { BuyNFT } from "./_components/BuyNFT";
 import { CancelNFTListing } from "./_components/CancelNFTListing";
+import { ReListTheNFT } from "./_components/ReListTheNFT";
 
 export default function ListedNFTFullDetailsPage() {
   const params = useParams<{ listingID: string }>();
@@ -166,7 +167,12 @@ export default function ListedNFTFullDetailsPage() {
 
   const isOwner =
     account.address?.toLowerCase() === singleListing.seller.toLowerCase();
-  const isSold = !singleListing.active;
+  const isSold =
+    !singleListing.active &&
+    singleListing.buyer !== "0x0000000000000000000000000000000000000000";
+  const isInactive =
+    !singleListing.active &&
+    singleListing.buyer === "0x0000000000000000000000000000000000000000";
   const priceInEth = formatEther(singleListing.price);
 
   return (
@@ -272,10 +278,26 @@ export default function ListedNFTFullDetailsPage() {
                     </h2>
                     <div className="flex items-center gap-2">
                       <Badge
-                        variant={isSold ? "secondary" : "default"}
-                        className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+                        variant={
+                          isSold
+                            ? "destructive"
+                            : singleListing.active
+                              ? "default"
+                              : "secondary"
+                        }
+                        className={
+                          isSold
+                            ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
+                            : singleListing.active
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400"
+                              : "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400"
+                        }
                       >
-                        {isSold ? "Sold" : "Available"}
+                        {isSold
+                          ? "Sold"
+                          : singleListing.active
+                            ? "Available"
+                            : "Inactive"}
                       </Badge>
                       {isOwner && <Badge variant="outline">Your Listing</Badge>}
                     </div>
@@ -315,7 +337,8 @@ export default function ListedNFTFullDetailsPage() {
 
                 {/* Action Buttons */}
                 <div className="space-y-3">
-                  {!isSold && account.isConnected && (
+                  {/* Buy Button - Show for active listings to non-owners */}
+                  {singleListing.active && !isOwner && account.isConnected && (
                     <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-800 dark:bg-emerald-900/10">
                       <BuyNFT
                         listingId={singleListing.listingId}
@@ -324,22 +347,47 @@ export default function ListedNFTFullDetailsPage() {
                     </div>
                   )}
 
-                  {!isSold && isOwner && account.isConnected && (
+                  {/* Cancel Button - Show for active listings to owners */}
+                  {singleListing.active && isOwner && account.isConnected && (
                     <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/10">
                       <CancelNFTListing listingId={singleListing.listingId} />
                     </div>
                   )}
 
-                  {!account.isConnected && (
+                  {/* Re-list Button - Show for inactive (cancelled) listings to owners */}
+                  {isInactive && isOwner && account.isConnected && (
+                    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-800 dark:bg-blue-900/10">
+                      {/* Re-list Button for inactive listings */}
+                      <ReListTheNFT listingId={singleListing.listingId} />
+                    </div>
+                  )}
+
+                  {/* Connect Wallet Message */}
+                  {!account.isConnected && !isSold && (
                     <Button className="w-full" variant="outline">
-                      Connect Wallet to Purchase
+                      Connect Wallet to{" "}
+                      {singleListing.active ? "Purchase" : "Manage"}
                     </Button>
                   )}
 
+                  {/* Sold Status Message */}
                   {isSold && (
-                    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center dark:border-gray-700 dark:bg-gray-800">
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        This NFT has been sold
+                    <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center dark:border-green-700 dark:bg-green-900/10">
+                      <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                        🎉 This NFT Is Owned By You!
+                      </p>
+                    </div>
+                  )}
+                  {/* Re-list Button for sold NFTs */}
+                  {isSold && (
+                    <ReListTheNFT listingId={singleListing.listingId} />
+                  )}
+
+                  {/* Inactive Status Message for non-owners */}
+                  {isInactive && !isOwner && (
+                    <div className="rounded-lg border border-orange-200 bg-orange-50 p-4 text-center dark:border-orange-700 dark:bg-orange-900/10">
+                      <p className="text-sm font-medium text-orange-700 dark:text-orange-300">
+                        This listing is currently inactive
                       </p>
                     </div>
                   )}
@@ -478,11 +526,23 @@ export default function ListedNFTFullDetailsPage() {
                   {isSold && (
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-3">
-                        <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
                         <span className="text-sm">Sold</span>
                       </div>
                       <span className="text-sm text-gray-500">
                         {priceInEth} ETH
+                      </span>
+                    </div>
+                  )}
+
+                  {isInactive && (
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-3">
+                        <div className="h-2 w-2 rounded-full bg-orange-500"></div>
+                        <span className="text-sm">Cancelled</span>
+                      </div>
+                      <span className="text-sm text-gray-500">
+                        Listing removed
                       </span>
                     </div>
                   )}

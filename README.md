@@ -8,12 +8,36 @@
   
   <p><strong>A decentralized NFT marketplace platform where digital artists can mint, showcase, and trade their artwork as NFTs.</strong></p>
   
-  <p>Built with modern web3 technologies and featuring a comprehensive smart contract backend with 100% test coverage.</p>
+  <p>✨ <strong>Live Platform:</strong> <a href="https://crypto-canvas-nft.vercel.app/">crypto-canvas-nft.vercel.app</a> ✨</p>
+  
+  <p>Built with modern web3 technologies and deployed on Sepolia testnet with 100% smart contract test coverage.</p>
   
   [![Solidity](https://img.shields.io/badge/Solidity-^0.8.24-blue?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
   [![Foundry](https://img.shields.io/badge/Foundry-Tested-orange?style=for-the-badge&logo=ethereum)](https://book.getfoundry.sh/)
+  [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
   [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen?style=for-the-badge)](./contract/README.md)
+  [![Deployed](https://img.shields.io/badge/Deployed-Sepolia-blue?style=for-the-badge&logo=ethereum)](https://crypto-canvas-nft.vercel.app/)
+  [![Live](https://img.shields.io/badge/Live-Vercel-black?style=for-the-badge&logo=vercel)](https://crypto-canvas-nft.vercel.app/)
   [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](./LICENSE)
+  
+</div>
+
+---
+
+## 📚 **Detailed Documentation**
+
+<div align="center">
+  
+  ### 🔍 **Want In-Depth Details?**
+  
+  <p>This README provides a comprehensive overview. For detailed technical documentation:</p>
+  
+  | Component | Documentation | Description |
+  |-----------|---------------|-------------|
+  | 🎨 **Frontend** | [📖 UI README](./ui/README.md) | Next.js app, Web3 integration, UI components |
+  | ⚡ **Smart Contracts** | [📖 Contract README](./contract/README.md) | Solidity contracts, testing, deployment |
+  
+  <p><strong>📖 [Frontend Details →](./ui/README.md)</strong> | <strong>⚡ [Contract Details →](./contract/README.md)</strong></p>
   
 </div>
 
@@ -72,18 +96,36 @@ CryptoCanvas is a full-stack NFT marketplace that enables creators to:
 
 ## 🏗️ Architecture
 
+### 🔗 Live Deployment
+
+- **🌐 Frontend**: [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/) (Vercel)
+- **⚡ Smart Contracts**: Deployed on Sepolia Testnet via Alchemy
+- **📁 IPFS Storage**: Pinata for decentralized metadata
+
+### 💻 Tech Stack
+
+#### Frontend (UI)
+
+- **Next.js 15**: React framework with App Router
+- **React 19**: Modern component architecture
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first styling
+- **Wagmi**: Ethereum React hooks
+- **RainbowKit**: Beautiful wallet connection
+- **Pinata IPFS**: Decentralized storage
+
+#### Backend (Smart Contracts)
+
+- **Solidity 0.8.24**: Smart contract language
+- **Foundry**: Development framework
+- **Alchemy**: Sepolia deployment provider
+- **OpenZeppelin**: Security standards
+
 ### Smart Contracts (Backend)
 
 - **CryptoCanvasNFT**: ERC-721 compliant NFT contract for minting digital art
 - **MarketPlace**: Core trading functionality with listing, buying, and selling features
 - **Treasury**: Secure fee collection and withdrawal system
-
-### Frontend (Coming Soon)
-
-- Modern React.js application
-- Web3 wallet integration
-- IPFS metadata storage
-- Responsive design for all devices
 
 ## ✨ Key Features
 
@@ -100,6 +142,14 @@ CryptoCanvas is a full-stack NFT marketplace that enables creators to:
 - Secure purchasing with ETH
 - Purchase history tracking
 - Resale capabilities
+- Wallet integration (MetaMask, WalletConnect)
+
+### 🌐 For Everyone
+
+- **Live Platform**: Accessible at [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/)
+- **Responsive Design**: Works on desktop and mobile
+- **Web3 Integration**: Connect your wallet and start trading
+- **Decentralized Storage**: IPFS-powered metadata
 
 ### 🔧 For Developers
 
@@ -110,31 +160,54 @@ CryptoCanvas is a full-stack NFT marketplace that enables creators to:
 
 ## 📊 Project Status
 
-### ✅ Completed
+### ✅ Completed & Live
 
-- **Smart Contracts**: Full implementation with security features
-- **Testing Suite**: 45 comprehensive tests (100% coverage)
-- **Deployment System**: Automated deployment to Anvil and Sepolia
-- **Documentation**: Complete technical documentation
+- **🌐 Frontend Application**: React/Next.js UI deployed on Vercel
+- **⚡ Smart Contracts**: Deployed on Sepolia testnet via Alchemy
+- **🔗 Web3 Integration**: Wagmi & RainbowKit wallet connectivity
+- **📁 IPFS Integration**: Pinata decentralized metadata storage
+- **🧪 Testing Suite**: 45 comprehensive tests (100% coverage)
+- **📚 Documentation**: Complete technical documentation
 
-### 🚧 In Progress
+### 🎯 Live Platform Features
 
-- **Frontend Application**: React.js UI/UX development
-- **IPFS Integration**: Decentralized metadata storage
-- **Wallet Integration**: MetaMask and WalletConnect support
+- **✨ NFT Minting**: Create and mint digital artwork
+- **🛒 Marketplace**: Buy and sell NFTs with ETH
+- **💼 Portfolio**: Manage your NFT collection
+- **🔄 Re-listing**: Secondary market functionality
+- **💰 Treasury**: Automated fee collection
 
 ## 🚀 Quick Start
 
-### 🔧 Smart Contract Development
+### 🌐 Try the Live Platform
 
-| Step | Command                                                     | Description             |
-| ---- | ----------------------------------------------------------- | ----------------------- |
-| 1️⃣   | `git clone https://github.com/kavinda-100/CryptoCanvas.git` | Clone repository        |
-| 2️⃣   | `cd CryptoCanvas/contract`                                  | Navigate to contracts   |
-| 3️⃣   | `forge install`                                             | Install dependencies    |
-| 4️⃣   | `make create-env`                                           | Setup environment       |
-| 5️⃣   | `make persist-state-load`                                   | Start local development |
-| 6️⃣   | `make deploy-local`                                         | Deploy contracts        |
+| Step | Action                                                                      | Description                 |
+| ---- | --------------------------------------------------------------------------- | --------------------------- |
+| 1️⃣   | Visit [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/) | Access the live platform    |
+| 2️⃣   | Connect your wallet (MetaMask recommended)                                  | Web3 authentication         |
+| 3️⃣   | Switch to Sepolia testnet                                                   | Get testnet ETH from faucet |
+| 4️⃣   | Explore NFTs or mint your own                                               | Start trading!              |
+
+### 🔧 Local Development
+
+#### Frontend (UI)
+
+| Step | Command                                                     | Description              |
+| ---- | ----------------------------------------------------------- | ------------------------ |
+| 1️⃣   | `git clone https://github.com/kavinda-100/CryptoCanvas.git` | Clone repository         |
+| 2️⃣   | `cd CryptoCanvas/ui`                                        | Navigate to frontend     |
+| 3️⃣   | `bun install`                                               | Install dependencies     |
+| 4️⃣   | `bun dev`                                                   | Start development server |
+
+#### Smart Contracts
+
+| Step | Command                    | Description             |
+| ---- | -------------------------- | ----------------------- |
+| 1️⃣   | `cd CryptoCanvas/contract` | Navigate to contracts   |
+| 2️⃣   | `forge install`            | Install dependencies    |
+| 3️⃣   | `make create-env`          | Setup environment       |
+| 4️⃣   | `make persist-state-load`  | Start local development |
+| 5️⃣   | `make deploy-local`        | Deploy contracts        |
 
 ### 🧪 Testing & Coverage
 
@@ -158,9 +231,18 @@ CryptoCanvas/
 │   │   ├── unit/                # Unit tests
 │   │   └── fuzz/                # Fuzz tests
 │   ├── script/                  # Deployment scripts
+│   ├── deployment-summary.json  # Sepolia deployment info
 │   └── makefile                 # Automation commands
-├── UI/                          # Frontend application (Coming Soon)
+├── ui/                          # Frontend application (Next.js)
+│   ├── src/                     # Source code
+│   │   ├── app/                 # Next.js app router
+│   │   ├── components/          # React components
+│   │   ├── lib/                 # Utilities
+│   │   └── providers/           # Web3 providers
+│   ├── public/                  # Static assets
+│   └── package.json             # Dependencies
 ├── imgs/                        # Project assets
+├── nft-seeder.json              # NFT metadata collection
 └── README.md                    # This file
 ```
 
@@ -187,15 +269,29 @@ Our smart contracts maintain industry-leading testing standards:
 
 ### 📡 Supported Networks
 
-| Network                 | Chain ID | Status     | RPC URL                                    |
-| ----------------------- | -------- | ---------- | ------------------------------------------ |
-| 🔨 **Anvil (Local)**    | 31337    | ✅ Active  | `http://127.0.0.1:8545`                    |
-| 🧪 **Sepolia Testnet**  | 11155111 | ✅ Active  | `https://eth-sepolia.g.alchemy.com/v2/...` |
-| 🚀 **Ethereum Mainnet** | 1        | 📋 Planned | `https://mainnet.infura.io/v3/...`         |
-| 🟣 **Polygon**          | 137      | 📋 Future  | `https://polygon-rpc.com`                  |
-| 🔵 **Arbitrum**         | 42161    | 📋 Future  | `https://arb1.arbitrum.io/rpc`             |
+| Network                 | Chain ID | Status         | RPC URL                                    |
+| ----------------------- | -------- | -------------- | ------------------------------------------ |
+| 🔨 **Anvil (Local)**    | 31337    | 🔧 Development | `http://127.0.0.1:8545`                    |
+| 🧪 **Sepolia Testnet**  | 11155111 | ✅ **LIVE**    | `https://eth-sepolia.g.alchemy.com/v2/...` |
+| 🚀 **Ethereum Mainnet** | 1        | 📋 Planned     | `https://mainnet.infura.io/v3/...`         |
+| 🟣 **Polygon**          | 137      | 📋 Future      | `https://polygon-rpc.com`                  |
+| 🔵 **Arbitrum**         | 42161    | 📋 Future      | `https://arb1.arbitrum.io/rpc`             |
 
 ### 🏗️ Current Deployments
+
+#### 🌐 **LIVE PRODUCTION**
+
+- **Frontend**: [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/) (Vercel)
+- **Network**: Sepolia Testnet
+- **Provider**: Alchemy
+- **IPFS**: Pinata
+- **Status**: ✅ Active
+
+#### 🧪 **Sepolia Testnet**
+
+- **Deployment**: Via Alchemy provider
+- **Contract Details**: See `deployment-summary.json`
+- **Explorer**: View on [Sepolia Etherscan](https://sepolia.etherscan.io/)
 
 #### 🔨 Local Development (Anvil)
 
@@ -336,8 +432,56 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 <div align="center">
   
+---
+
+## 🌐 Live Platform Access
+
+<div align="center">
+  
+  ### 🚀 **LIVE DEPLOYMENT**
+  
+  | Component | Platform | URL | Status |
+  |-----------|----------|-----|--------|
+  | 🌍 **Frontend** | Vercel | [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/) | ✅ Live |
+  | ⚡ **Smart Contracts** | Sepolia Testnet | [View on Etherscan](https://sepolia.etherscan.io/) | ✅ Deployed |
+  | 📁 **IPFS Storage** | Pinata | Decentralized Metadata | ✅ Active |
+  | 🔗 **RPC Provider** | Alchemy | Sepolia Network | ✅ Connected |
+  
+  ### 🎯 **Quick Access**
+  
+  **🌟 [START TRADING NOW →](https://crypto-canvas-nft.vercel.app/)**
+  
+  *Connect your wallet, switch to Sepolia testnet, and start exploring the NFT marketplace!*
+  
+</div>
+
+---
+
+## 📊 Project Metrics
+
+<div align="center">
+  
+  | Metric | Value | Status |
+  |--------|-------|--------|
+  | 🧪 **Test Coverage** | 100% | ✅ Complete |
+  | 📦 **Smart Contracts** | 3 deployed | ✅ Live |
+  | 🎨 **NFT Collection** | 8 genesis NFTs | ✅ Ready |
+  | 🔐 **Security Tests** | 45 comprehensive | ✅ Passed |
+  | 🌐 **Frontend Pages** | Fully responsive | ✅ Deployed |
+  | 📱 **Mobile Support** | PWA ready | ✅ Optimized |
+  
+</div>
+
+---
+
+<div align="center">
+  
   **Built with ❤️ by [Kavinda](https://github.com/kavinda-100) using modern Web3 technologies**
   
-  *Join us in revolutionizing digital art ownership and trading on the blockchain!* 🚀
+  ### 🎨 **Experience the Future of Digital Art Trading**
+  
+  *Join the CryptoCanvas community and revolutionize how digital art is owned and traded on the blockchain!* 🚀
+  
+  **🌟 [Visit CryptoCanvas →](https://crypto-canvas-nft.vercel.app/)**
   
 </div>

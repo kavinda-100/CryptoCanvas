@@ -4,11 +4,13 @@
   # CryptoCanvas Smart Contracts
   
   <p><strong>A comprehensive NFT marketplace platform built with Solidity and Foundry</strong></p>
-  <p>Featuring secure NFT minting, trading, and treasury management with 100% test coverage</p>
+  <p>✅ **DEPLOYED LIVE** on Sepolia Testnet via Alchemy with 100% test coverage</p>
   
   [![Solidity](https://img.shields.io/badge/Solidity-^0.8.24-blue?style=for-the-badge&logo=solidity)](https://soliditylang.org/)
   [![Foundry](https://img.shields.io/badge/Foundry-Framework-orange?style=for-the-badge&logo=ethereum)](https://book.getfoundry.sh/)
   [![OpenZeppelin](https://img.shields.io/badge/OpenZeppelin-Contracts-purple?style=for-the-badge)](https://openzeppelin.com/contracts/)
+  [![Deployed](https://img.shields.io/badge/Deployed-Sepolia-blue?style=for-the-badge&logo=ethereum)](https://sepolia.etherscan.io/)
+  [![Alchemy](https://img.shields.io/badge/Provider-Alchemy-black?style=for-the-badge)](https://alchemy.com/)
   [![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen?style=for-the-badge)](./README.md)
   
 </div>
@@ -17,7 +19,15 @@
 
 ## 🎨 Project Overview
 
-CryptoCanvas is a decentralized NFT marketplace that enables users to mint, list, buy, and trade digital art NFTs. The platform consists of three main smart contracts working together to provide a complete marketplace experience.
+CryptoCanvas is a **live, production-ready** decentralized NFT marketplace deployed on Sepolia testnet. The platform enables users to mint, list, buy, and trade digital art NFTs through a secure smart contract infrastructure.
+
+### 🌐 **Live Deployment Information**
+
+- **🔗 Network**: Sepolia Testnet
+- **⚡ Provider**: Alchemy
+- **📄 Deployment Details**: See `deployment-summary.json`
+- **🌍 Frontend**: [crypto-canvas-nft.vercel.app](https://crypto-canvas-nft.vercel.app/)
+- **🔍 Explorer**: View contracts on [Sepolia Etherscan](https://sepolia.etherscan.io/)
 
 ### 🏗️ Smart Contract Architecture
 
